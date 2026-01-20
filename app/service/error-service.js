@@ -1,6 +1,6 @@
 import db from '../config/database.js';
 
-export const saveError = async (c_error, n_desc, n_message) => {
+export const saveError = async (c_error, n_message, n_desc) => {
     try{
     await db('opr.t_d_error').insert({
         c_error: c_error,

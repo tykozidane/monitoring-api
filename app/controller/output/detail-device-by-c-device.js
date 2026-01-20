@@ -15,6 +15,6 @@ const controller = async (req, res) => {
         const saveDataError = await saveError()
         return response_error({ res, status: "2003", message: err.message, code: "3", data: err });
     }
-};
+}; 
 
 export default controller;

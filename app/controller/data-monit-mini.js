@@ -23,7 +23,7 @@ const controller = async (req, res) => {
         if(saveData.code != 0) throw saveData
         return response_success({ res, message: "Success", status: "00" });
     } catch (err) {
-        const saveDataError = await saveError()
+        const saveDataError = await saveError(err.code, err.message, JSON.stringify(err));
         return response_error({ res, status: "1002", message: err.message, code: "2", data: err });
     }
 };
