@@ -1,4 +1,5 @@
 import db from "../config/database.js";
+import { indexMonitoringData } from "../service/elastic-service.js";
 
 /**
  * Tentukan status berdasarkan threshold
@@ -137,7 +138,8 @@ export const saveMonitoringGateService = async (payload) => {
 
             monitoringData.push({
                 c_data_type: dt.c_data_type,
-                value: `${value} ${dt.n_measure ?? ""}`.trim(),
+                value: value,
+                measure: dt.n_measure || "",
                 status: getStatus(value, dt)
             });
         }
@@ -150,7 +152,7 @@ export const saveMonitoringGateService = async (payload) => {
             const masterDevices = await trx("master.t_m_device")
                 .where({
                     c_project,
-                    c_terminal: terminal.c_terminal_01,
+                    c_terminal_sn: terminal.c_terminal_sn,
                     b_active: true,
                     d_deleted_at: null
                 });
@@ -187,7 +189,7 @@ export const saveMonitoringGateService = async (payload) => {
         ========================== */
         // hitung total data monitoring
         const total = await trx("opr.t_d_monitoring_device")
-            .where({ c_project, c_terminal: terminal.c_terminal_01, c_station })
+            .where({ c_project, c_terminal_sn: terminal.c_terminal_sn, c_station })
             .count("i_id as total")
             .first();
 
@@ -204,7 +206,7 @@ export const saveMonitoringGateService = async (payload) => {
             ========================== */
             await trx("opr.t_d_monitoring_device").insert({
                 c_project,
-                c_terminal: terminal.c_terminal_01,
+                c_terminal_sn: terminal.c_terminal_sn,
                 c_station,
                 d_monitoring: monitoringTime.toISOString(),
                 n_status,
@@ -219,7 +221,7 @@ export const saveMonitoringGateService = async (payload) => {
             UPDATE DATA PALING LAMA
             ========================== */
             const oldest = await trx("opr.t_d_monitoring_device")
-                .where({ c_project, c_terminal: terminal.c_terminal_01, c_station })
+                .where({ c_project, c_terminal_sn: terminal.c_terminal_sn, c_station })
                 .orderBy("d_monitoring", "asc")   // 👈 PALING LAMA
                 .first();
 
@@ -229,6 +231,18 @@ export const saveMonitoringGateService = async (payload) => {
                     message: "Data monitoring lama tidak ditemukan"
                 };
             }
+            const elasticDoc = {
+                c_project,
+                c_station,
+                c_terminal: terminal.c_terminal_01,
+                c_terminal_sn: terminal.c_terminal_sn,
+                c_terminal_type: terminal.c_terminal_type,
+                n_status,
+                d_monitoring: monitoringTime.toISOString(),
+                data: monitoringData,
+                devices: devices,
+                raw_data: payload   // opsional, bisa dihapus kalau berat
+            };
 
             await trx("opr.t_d_monitoring_device")
                 .where({ i_id: oldest.i_id })
@@ -241,6 +255,9 @@ export const saveMonitoringGateService = async (payload) => {
                 });
             }
         await trx.commit();
+        // setelah trx.commit()
+        // await indexMonitoringData(elasticDoc);
+
         return { code: 0, message: "Monitoring gate berhasil disimpan" };
 
     } catch (err) {

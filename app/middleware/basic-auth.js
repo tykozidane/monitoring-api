@@ -1,3 +1,9 @@
+const users = Object.fromEntries(
+    process.env.BASIC_AUTH_USERS
+    .split(",")
+    .map(item => item.split(":"))
+);
+
 async function basicAuth(req, res, next) {
     // make authenticate path public
     if (req.path === '/users/authenticate') {
@@ -15,7 +21,7 @@ async function basicAuth(req, res, next) {
     const [username, password] = credentials.split(':');
     // const user = await userService.authenticate({ username, password });
     // Pengecekan username dan password dari env
-    if (username != process.env.USERNAME_BASIC_AUTH || password != process.env.PASSWORD_BASIC_AUTH) {
+    if (!users[username] || users[username] !== password) {
         return res.status(401).json({ message: 'Invalid Authentication Credentials' });
     }
 
