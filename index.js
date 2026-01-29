@@ -7,6 +7,7 @@ import monit from "./app/controller/monit.routes.js";
 import output from "./app/controller/output/output.routes.js";
 import basicAuth from "./app/middleware/basic-auth.js";
 import esClient from "./app/config/elasticsearch.js";
+import db from "./app/config/database.js";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -28,12 +29,6 @@ app.use(response);
 var router = express.Router();
 
 app.get("/", async (req, res) => {
-  try {
-    const info = await esClient.info();
-    console.log("✅ Elasticsearch connected:", info.cluster_name);
-  } catch (err) {
-    console.error("❌ Elasticsearch connection failed:", err.message);
-  }
   return res.status(200).send("Connect!");
 });
 
@@ -44,5 +39,22 @@ router.use("/output", output);
 
 const port = process.env.APP_PORT || 5000;
 app.listen(port, () => {
-  console.log(`System is listening to port ${port}`);
+  testConnection();
+  console.log(`System is listening to port http://localhost:${port}`);
 });
+
+const testConnection = async () => {
+  try {
+    await db.raw("select 1");
+    console.log("✅ PostgreSQL connected");
+  } catch (err) {
+    console.error("❌ PostgreSQL connection failed:", err.message);
+  }
+
+  try {
+    await esClient.info();
+    console.log("✅ Elasticsearch connected");
+  } catch (err) {
+    console.error("❌ Elasticsearch connection failed:", err.message);
+  }
+};
