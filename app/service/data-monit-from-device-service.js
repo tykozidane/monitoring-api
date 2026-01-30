@@ -198,7 +198,18 @@ export const saveMonitoringGateService = async (payload) => {
         
         //Check Overall Status
         const n_status = resolveOverallStatus(monitoringData, devices);
-
+        const elasticDoc = {
+                c_project,
+                c_station,
+                c_terminal: terminal.c_terminal_01,
+                c_terminal_sn: terminal.c_terminal_sn,
+                c_terminal_type: terminal.c_terminal_type,
+                n_status,
+                d_monitoring: monitoringTime.toISOString(),
+                data: monitoringData,
+                devices: devices,
+                raw_data: payload   // opsional, bisa dihapus kalau berat
+            };
         if (Number(total.total) < 10) {
 
             /* =========================
@@ -231,18 +242,7 @@ export const saveMonitoringGateService = async (payload) => {
                     message: "Data monitoring lama tidak ditemukan"
                 };
             }
-            const elasticDoc = {
-                c_project,
-                c_station,
-                c_terminal: terminal.c_terminal_01,
-                c_terminal_sn: terminal.c_terminal_sn,
-                c_terminal_type: terminal.c_terminal_type,
-                n_status,
-                d_monitoring: monitoringTime.toISOString(),
-                data: monitoringData,
-                devices: devices,
-                raw_data: payload   // opsional, bisa dihapus kalau berat
-            };
+            
 
             await trx("opr.t_d_monitoring_device")
                 .where({ i_id: oldest.i_id })
@@ -255,9 +255,11 @@ export const saveMonitoringGateService = async (payload) => {
                 });
             }
         await trx.commit();
+        // console.log("Before elasticDoc:", elasticDoc);
         // setelah trx.commit()
-        // await indexMonitoringData(elasticDoc);
-
+        const elasticResult = await indexMonitoringData(elasticDoc);
+        console.log("Elastic result:", elasticResult);
+        
         return { code: 0, message: "Monitoring gate berhasil disimpan" };
 
     } catch (err) {
