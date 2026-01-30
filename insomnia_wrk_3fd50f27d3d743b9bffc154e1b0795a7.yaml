@@ -1,10 +1,10 @@
 type: collection.insomnia.rest/5.0
 schema_version: "5.1"
-name: Monitoring-API
+name: API-Monitoring-Digital-Analytics
 meta:
   id: wrk_3fd50f27d3d743b9bffc154e1b0795a7
   created: 1769769473652
-  modified: 1769769538244
+  modified: 1769771633898
   description: ""
 collection:
   - name: Monitoring-API
