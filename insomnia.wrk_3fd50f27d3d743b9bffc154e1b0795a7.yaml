@@ -1,0 +1,906 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: Monitoring-API
+meta:
+  id: wrk_3fd50f27d3d743b9bffc154e1b0795a7
+  created: 1769769473652
+  modified: 1769769538244
+  description: ""
+collection:
+  - name: Monitoring-API
+    meta:
+      id: fld_dd78591695b148989217bb173a8e6e75
+      created: 1765953310856
+      modified: 1765953310856
+      sortKey: -1765953305288
+      description: ""
+    children:
+      - url: http://localhost:5000/api/v1/monit/data-monitoring
+        name: Data Monitoring
+        meta:
+          id: req_3f49833181d14cfba2ef8068c1a34cc4
+          created: 1765953310857
+          modified: 1765953310857
+          isPrivate: false
+          description: ""
+          sortKey: -1765953305287
+        method: POST
+        body:
+          mimeType: application/json
+          text: "{\r
+
+            \    \"uid_var\": \"uid_var\",\r
+
+            \    \"name_var\": \"name_var\",\r
+
+            \    \"unit_int\": \"unit_int\",\r
+
+            \    \"prefix_int\": \"prefix_int\",\r
+
+            \    \"type_int\": \"type_int\",\r
+
+            \    \"value_flo\": \"value_flo\",\r
+
+            \    \"ts_int\": \"ts_int\"\r
+
+            }"
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://36.66.3.44:7015/api/v1/monit/data-monitoring
+        name: Data Monitoring Server HIS
+        meta:
+          id: req_25b2c7dad06540a69af886f17764f122
+          created: 1765953310858
+          modified: 1766486515305
+          isPrivate: false
+          description: ""
+          sortKey: -1765953305286
+        method: POST
+        body:
+          mimeType: application/json
+          text: "{\r
+
+            \    \"uid_var\": \"uid_var\",\r
+
+            \    \"name_var\": \"name_var\",\r
+
+            \    \"unit_int\": \"unit_int\",\r
+
+            \    \"prefix_int\": \"prefix_int\",\r
+
+            \    \"type_int\": \"type_int\",\r
+
+            \    \"value_flo\": \"value_flo\",\r
+
+            \    \"ts_int\": \"ts_int\"\r
+
+            }"
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5000/api/v1/monit/send-data
+        name: Send Monit
+        meta:
+          id: req_bb544a57bb8f4dbf9cee1990e0fe01b5
+          created: 1765953310859
+          modified: 1765953310859
+          isPrivate: false
+          description: ""
+          sortKey: -1765953305285
+        method: POST
+        body:
+          mimeType: application/json
+          text: "{\r
+
+            \    \"uid\" : \"testing123\",\r
+
+            \    \"name\" : \"Device Testing\",\r
+
+            \    \"project_id\": 1,\r
+
+            \    \"device_type_id\":1,\r
+
+            \    \"device_subtype_id\":1,\r
+
+            \    \"ts\": 1745817527,\r
+
+            \    \"sensors\" : [\r
+
+            \        {\"type\" : 1, \"values\" : 87290},\r
+
+            \        {\"type\" : 2, \"values\" : 48.1},\r
+
+            \        {\"type\" : 3, \"values\" : 89.5},\r
+
+            \        {\"type\" : 4, \"values\" : 225.1},\r
+
+            \        {\"type\" : 5, \"values\" : 11.89},\r
+
+            \        {\"type\" : 6, \"values\" : 12.12},\r
+
+            \        {\"type\" : 7, \"values\" : 48.1},\r
+
+            \        {\"type\" : 8, \"values\" : 48.1},\r
+
+            \        {\"type\" : 9, \"values\" : 48.1},\r
+
+            \        {\"type\" : 11, \"values\" : 225.1},\r
+
+            \        {\"type\" : 12, \"values\" : 225.1}, \r
+
+            \        {\"type\" : 13, \"values\" : 225.1},\r
+
+            \        {\"type\" : 14, \"values\" : 225.1},\r
+
+            \        {\"type\" : 15, \"values\" : 225.1}, \r
+
+            \        {\"type\" : 16, \"values\" : 225.1}\r
+
+            \    ]\r
+
+            }"
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: basic
+          username: hisnutech
+          password: nutech123
+          disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://36.66.3.44:7015/api/v1/monit/send-data
+        name: Send Monit Server HIS
+        meta:
+          id: req_704791449a414004a465d06cdd37ad79
+          created: 1765953310860
+          modified: 1765953310860
+          isPrivate: false
+          description: ""
+          sortKey: -1765953305284
+        method: POST
+        body:
+          mimeType: application/json
+          text: "{\r
+
+            \    \"uid\" : \"testing123\",\r
+
+            \    \"name\" : \"Device Testing\",\r
+
+            \    \"project_id\": 1,\r
+
+            \    \"device_type_id\":1,\r
+
+            \    \"device_subtype_id\":1,\r
+
+            \    \"timestamp\": 1745817527,\r
+
+            \    \"sensors\" : [\r
+
+            \        {\"type\" : 1, \"values\" : 87300},\r
+
+            \        {\"type\" : 2, \"values\" : 55.1},\r
+
+            \        {\"type\" : 3, \"values\" : 85.5},\r
+
+            \        {\"type\" : 4, \"values\" : 74.1},\r
+
+            \        {\"type\" : 5, \"values\" : 17.89},\r
+
+            \        {\"type\" : 6, \"values\" : 25.12},\r
+
+            \        {\"type\" : 7, \"values\" : 43.1},\r
+
+            \        {\"type\" : 8, \"values\" : 46.1},\r
+
+            \        {\"type\" : 9, \"values\" : 58.1},\r
+
+            \        {\"type\" : 11, \"values\" : 32.89},\r
+
+            \        {\"type\" : 12, \"values\" : 43.1}, \r
+
+            \        {\"type\" : 13, \"values\" : 40.5},\r
+
+            \        {\"type\" : 14, \"values\" : 41.8},\r
+
+            \        {\"type\" : 15, \"values\" : 46.5}, \r
+
+            \        {\"type\" : 16, \"values\" : 78.6}\r
+
+            \    ]\r
+
+            }"
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://192.168.1.104:80/
+        name: Testing
+        meta:
+          id: req_556fbe209e274be18ab598e94aaeb044
+          created: 1765953310861
+          modified: 1765953310861
+          isPrivate: false
+          description: ""
+          sortKey: -1765953305283
+        method: POST
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://36.66.3.44:7015/api/v1/monit/mini
+        name: Send Monit Mini Server HIS
+        meta:
+          id: req_8dda08823f2f461d847206cd3f196ba4
+          created: 1767776432923
+          modified: 1767776805956
+          isPrivate: false
+          description: ""
+          sortKey: -1765953305283.5
+        method: POST
+        body:
+          mimeType: text/plain
+          text: '[3,2,"vmmerak1","normal",220.50,27.31,36.82,24.34,-6.400,"normal",12.78,0.000,"normal",24.26,11.200,"normal",12.60,-54.400,"normal",11.96,-41.600,"normal",0.02,0.000,"upnormal"]'
+        headers:
+          - name: Content-Type
+            value: text/plain
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - name: Output
+        meta:
+          id: fld_fd71d179ebc84477bb40980025eb9b07
+          created: 1766487169798
+          modified: 1766487174206
+          sortKey: -1765953305387
+          description: ""
+        children:
+          - url: http://36.66.3.44:7015/api/v1/output/all-data
+            name: GET ALL DATA
+            meta:
+              id: req_cac9049446d946be851a93ffd373002d
+              created: 1766487177884
+              modified: 1766487861686
+              isPrivate: false
+              description: ""
+              sortKey: -1766487177884
+            method: POST
+            body:
+              mimeType: application/json
+              text: ""
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.2.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://36.66.3.44:7015/api/v1/output/all-station
+            name: GET ALL STATION
+            meta:
+              id: req_09f393c914e74f419a6052d3c15579ca
+              created: 1766487308428
+              modified: 1766487561527
+              isPrivate: false
+              description: ""
+              sortKey: -1766220259258.5
+            method: POST
+            body:
+              mimeType: application/json
+              text: ""
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.2.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://36.66.3.44:7015/api/v1/output/device-by-project
+            name: GET DEVICE BY PROJECT
+            meta:
+              id: req_c0b29379225d4c5e826d4b13235b48b4
+              created: 1766487357691
+              modified: 1766487380409
+              isPrivate: false
+              description: ""
+              sortKey: -1766086799945.75
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"c_project": "2"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.2.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://36.66.3.44:7015/api/v1/output/device-by-station
+            name: GET DEVICE BY STATION
+            meta:
+              id: req_9d007a2403464243b8ff5cfa00de9635
+              created: 1766487407966
+              modified: 1767777558782
+              isPrivate: false
+              description: ""
+              sortKey: -1766020070289.375
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"c_station": "HAR"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.2.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://36.66.3.44:7015/api/v1/output/detail-device
+            name: GET DETAIL DEVICE
+            meta:
+              id: req_61a835bd87194829b7160b4485ac2fcb
+              created: 1766487470727
+              modified: 1766487544919
+              isPrivate: false
+              description: ""
+              sortKey: -1765986705461.1875
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"c_project": 2,
+                	"c_device": "VMDKA1"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.2.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: LOCAL
+        meta:
+          id: fld_96638bcdd1ed4d32af7179a9d0d59d3b
+          created: 1769153049547
+          modified: 1769153049547
+          sortKey: -1769153049547
+          description: ""
+        children:
+          - url: localhost:5000/api/v1/monit/device-send-data
+            name: API Monitoring Data LOCAL
+            meta:
+              id: req_b0c67781f60342a09b466f6a6bf852cf
+              created: 1768285045599
+              modified: 1769572034374
+              isPrivate: false
+              description: ""
+              sortKey: -1769365531053.5
+            method: POST
+            body:
+              mimeType: application/json
+              text: |
+                {
+                  "c_terminal_01": "500",
+                  "c_terminal_02": "550",
+                  "c_terminal_sn": "072-1293",
+                  "c_project": "KCI",
+                  "c_terminal_type": "G10",
+                  "c_station": "JUA",
+
+                  "timestamp": 1745817527,
+
+                  "voltageac": 27.2,                 
+                  "temperature": 38.5,              
+                  "temperature_controller": 47.8,   
+                  "temperature_epc": 52.3,          
+                  "humidity": 68.1,                 
+
+                  "voltage10": 24.1,                
+                  "current10": 14.2,                
+
+                  "voltage11": 22.5,                
+                  "current11": 8.2,                 
+
+                  "voltage12": 26.8,                
+                  "current12": 10.1,                
+
+                  "voltage20": 23.8,                
+                  "current20": 5.5,                 
+
+                  "voltage21": 24.6,                
+                  "current21": 11.3,                
+
+                  "card_reader_01": {
+                    "serialnumber": "101010-101010",
+                    "direction": 0,
+                    "status": 0,
+                    "description": "Device working normally"
+                  },
+
+                  "qr_scanner_01": {
+                    "serialnumber": "101010-123123",
+                    "direction": 0,
+                    "status": 1,
+                    "description": "QR scanner response delay detected"
+                  },
+
+                  "card_dispenser": {
+                    "serialnumber": "101010-121212",
+                    "direction": 0,
+                    "status": 2,
+                    "description": "Card dispenser jammed"
+                  }
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              type: basic
+              useISO88591: false
+              username: hisnutech
+              password: nutech123
+              disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: localhost:5000/api/v1/output/all-terminal-monitoring-latest
+            name: All Terminal Monitoring Latest
+            meta:
+              id: req_92e26dbf0acb4eaeab8fbd742cc97968
+              created: 1769153060702
+              modified: 1769155023277
+              isPrivate: false
+              description: ""
+              sortKey: -1769153060702
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"c_project" : "KCI",
+                	"c_station" : ""
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.3.0
+                description: ""
+                disabled: false
+            authentication:
+              type: basic
+              useISO88591: false
+              username: hisnutech
+              password: nutech123
+              disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: localhost:5000/api/v1/terminal/sync-terminal
+            name: Sync Terminal
+            meta:
+              id: req_f96a32cd30aa48679c126fdef1c315a7
+              created: 1769436354504
+              modified: 1769496499626
+              isPrivate: false
+              description: ""
+              sortKey: -1769436354504
+            method: POST
+            body:
+              mimeType: application/json
+              text: |
+                {
+                  "c_terminal_sn": "TERM-001",
+                  "c_terminal_01": "A01",
+                  "c_terminal_02": "B01",
+                  "c_terminal_type": "VM",
+                  "c_project": "LRT",
+                  "c_station": "DUKUH ATAS",
+                  "n_terminal_name": "VM Dukuh Atas",
+                  "devices": [
+                    {
+                      "c_device": "QR-01",
+                      "c_serial_number": "SN-QR-01",
+                      "c_device_type": "QR",
+                      "c_direction": 1,
+                      "n_device_name": "QR Scanner In"
+                    },
+                    {
+                      "c_device": "EDC-01",
+                      "c_serial_number": "SN-EDC-01",
+                      "c_device_type": "EDC",
+                      "c_direction": 2,
+                      "n_device_name": "EDC Out"
+                    }
+                  ]
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.3.0
+                description: ""
+                disabled: false
+            authentication:
+              type: basic
+              useISO88591: false
+              username: hisnutech
+              password: nutech123
+              disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: localhost:5000/api/v1/monit/device-send-transaction
+            name: API Monitoring Transaction  LOCAL
+            meta:
+              id: req_68fe152ecf4349ca959c7db9b9921559
+              created: 1769571739522
+              modified: 1769572582098
+              isPrivate: false
+              description: ""
+              sortKey: -1769294707603
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"c_terminal_sn" : "072-1293",
+                	"c_project" : "KCI",
+                	"c_terminal_type" : "G10",
+                	"c_station" : "JUA",
+                	"id_transaction" : "JUAG1020250128105333000",
+                	"total_time" : 1000,
+                	"detail_times" : [
+                		{
+                			"process_type" : "reading card",
+                			"time" : 100,
+                			"index" : 1
+                		},
+                		{
+                			"process_type" : "get fare",
+                			"time" : 100,
+                			"index" : 2
+                		},
+                		{
+                			"process_type" : "deduct card",
+                			"time" : 100,
+                			"index" : 3
+                		},
+                		{
+                			"process_type" : "open gate",
+                			"time" : 100,
+                			"index" : 4
+                		}
+                	]
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              type: basic
+              useISO88591: false
+              username: hisnutech
+              password: nutech123
+              disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: DEV
+        meta:
+          id: fld_79550cca0fd247a591a91e0d880915e9
+          created: 1769571764268
+          modified: 1769571764268
+          sortKey: -1769571764268
+          description: ""
+        children:
+          - url: 192.168.62.90:4003/api/v1/monit/device-send-data
+            name: API Monitoring New Concept Server DEV
+            meta:
+              id: req_0a35d9fb9a074ac799ae698e9fab0cf1
+              created: 1768908622779
+              modified: 1769571776086
+              isPrivate: false
+              description: ""
+              sortKey: -1769571776061
+            method: POST
+            body:
+              mimeType: application/json
+              text: |
+                {
+                  "c_terminal_01": "500",
+                  "c_terminal_02": "550",
+                  "c_terminal_sn": "072-1293",
+                  "c_project": "KCI",
+                  "c_terminal_type": "G10",
+                  "c_station": "JUA",
+
+                  "timestamp": 1745817527,
+
+                  "voltageac": 27.2,                 
+                  "temperature": 38.5,              
+                  "temperature_controller": 47.8,   
+                  "temperature_epc": 52.3,          
+                  "humidity": 68.1,                 
+
+                  "voltage10": 24.1,                
+                  "current10": 14.2,                
+
+                  "voltage11": 22.5,                
+                  "current11": 8.2,                 
+
+                  "voltage12": 26.8,                
+                  "current12": 10.1,                
+
+                  "voltage20": 23.8,                
+                  "current20": 5.5,                 
+
+                  "voltage21": 24.6,                
+                  "current21": 11.3,                
+
+                  "card_reader_01": {
+                    "serialnumber": "101010-101010",
+                    "direction": 0,
+                    "status": 0,
+                    "description": "Device working normally"
+                  },
+
+                  "qr_scanner_01": {
+                    "serialnumber": "101010-123123",
+                    "direction": 0,
+                    "status": 1,
+                    "description": "QR scanner response delay detected"
+                  },
+
+                  "card_dispenser": {
+                    "serialnumber": "101010-121212",
+                    "direction": 0,
+                    "status": 2,
+                    "description": "Card dispenser jammed"
+                  }
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              type: basic
+              useISO88591: false
+              username: hisnutech
+              password: nutech123
+              disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: 192.168.62.90:4003/api/v1/monit/device-send-data
+            name: API Monitoring Data DEV
+            meta:
+              id: req_6b36eb9b99e8442898905ff5b5e19c40
+              created: 1769660558955
+              modified: 1769660574579
+              isPrivate: false
+              description: ""
+              sortKey: -1769571775961
+            method: POST
+            body:
+              mimeType: application/json
+              text: |
+                {
+                  "c_terminal_01": "500",
+                  "c_terminal_02": "550",
+                  "c_terminal_sn": "072-1293",
+                  "c_project": "KCI",
+                  "c_terminal_type": "G10",
+                  "c_station": "JUA",
+
+                  "timestamp": 1745817527,
+
+                  "voltageac": 27.2,                 
+                  "temperature": 38.5,              
+                  "temperature_controller": 47.8,   
+                  "temperature_epc": 52.3,          
+                  "humidity": 68.1,                 
+
+                  "voltage10": 24.1,                
+                  "current10": 14.2,                
+
+                  "voltage11": 22.5,                
+                  "current11": 8.2,                 
+
+                  "voltage12": 26.8,                
+                  "current12": 10.1,                
+
+                  "voltage20": 23.8,                
+                  "current20": 5.5,                 
+
+                  "voltage21": 24.6,                
+                  "current21": 11.3,                
+
+                  "card_reader_01": {
+                    "serialnumber": "101010-101010",
+                    "direction": 0,
+                    "status": 0,
+                    "description": "Device working normally"
+                  },
+
+                  "qr_scanner_01": {
+                    "serialnumber": "101010-123123",
+                    "direction": 0,
+                    "status": 1,
+                    "description": "QR scanner response delay detected"
+                  },
+
+                  "card_dispenser": {
+                    "serialnumber": "101010-121212",
+                    "direction": 0,
+                    "status": 2,
+                    "description": "Card dispenser jammed"
+                  }
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              type: basic
+              useISO88591: false
+              username: hisnutech
+              password: nutech123
+              disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: 192.168.62.90:4003/
+            name: New Request
+            meta:
+              id: req_599c33b894ee4204ab55bce977255168
+              created: 1769660624797
+              modified: 1769660706607
+              isPrivate: false
+              description: ""
+              sortKey: -1769660624797
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.3.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_e7dfe9df882f443daa04b1691493f59c
+    created: 1765953410208
+    modified: 1765953410208
+environments:
+  name: Base Environment
+  meta:
+    id: env_29c551b666484f168460077e96ac2a21
+    created: 1765953310862
+    modified: 1765954138909
+    isPrivate: false
+  data:
+    DEV: http://10.42.253.18:3001/api/v1
+    LOCAL: http://localhost:3001/api/v1
+    token: ""
+    c_login: ""
