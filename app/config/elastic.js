@@ -1,11 +1,17 @@
 import { Client } from "@elastic/elasticsearch";
+import dotenv from "dotenv";
 
-const elasticClient = new Client({
-    node: "http://192.168.1.12:9200", // sesuai token kamu
-    auth: {
-        username: "elastic",
-        password: "Ii=ffEq4fUzSsrSIdmEs"
-    }
+dotenv.config();
+
+const client = new Client({
+  node: process.env.ELASTIC_URL,
+  auth: {
+    username: process.env.ELASTIC_USER,
+    password: process.env.ELASTIC_PASS,
+  },
+  tls: {
+    rejectUnauthorized: false,
+  },
 });
 
-export default elasticClient;
+export default client;
