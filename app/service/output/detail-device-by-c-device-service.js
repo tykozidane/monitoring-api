@@ -59,3 +59,37 @@ export const getDetailDevice= async (c_project, c_device) => {
         return {code : "2120", data : err}
     }
 }
+
+export const getLatestMonitoringPerTerminal = async (c_project) => {
+    try {
+        const query = db
+        .select(
+            db.raw("DISTINCT ON (m.c_terminal_sn) m.*")
+        )
+        .from({ m: "monitoring.t_d_monitoring" })
+        .join(
+            { t: "master.t_m_terminal" },
+            "t.c_terminal_sn",
+            "m.c_terminal_sn"
+        )
+        .where("t.b_active", true)
+        .whereNull("t.d_deleted_at")
+        .orderBy([
+            { column: "m.c_terminal_sn", order: "asc" },
+            { column: "m.d_created_at", order: "desc" }
+        ]);
+
+        if (c_project) {
+        query.andWhere("m.c_project", c_project);
+        }
+
+        return { code: 0, data: await query };
+
+    } catch (err) {
+        return {
+        code: "3001",
+        message: "Failed to get latest monitoring data",
+        data: err
+        };
+    }
+};

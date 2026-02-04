@@ -5,6 +5,7 @@ import { getAllDataStation } from "../../service/output/send-all-station-service
 
 const controller = async (req, res) => {
     try {
+        console.log("Send All Station Controller")
         const getdata = await getAllDataStation()
         var {code , message} = getdata
         if(code != 0) throw getdata

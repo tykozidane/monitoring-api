@@ -1,22 +1,25 @@
 import { response_error, response_success_data } from "../../config/response.js";
 import { saveError } from "../../service/error-service.js";
-import { getAllTerminalLatestMonitoringAllStationService  } from "../../service/output/getAllTerminalLatestMonitoringService.js";
+import { getAllTerminalLatestMonitoringAllStationService, getAllTerminalLatestMonitoringAllStationServiceByProject  } from "../../service/output/getAllTerminalLatestMonitoringService.js";
 
 const controller = async (req, res) => {
     try {
         const { c_project } = req.body;
 console.log("Start c_project", c_project)
-        if (!c_project) {
-            return response_error({
-                res,
-                status: "1001",
-                message: "c_project is required",
-                code: "VALIDATION_ERROR"
-            });
-        }
+        if (!req.body.c_project) {
+            const result = await getAllTerminalLatestMonitoringAllStationService();
 
-        const result = await getAllTerminalLatestMonitoringAllStationService({
-            c_project
+        if (result.code !== 0) throw result;
+
+        return response_success_data({
+            res,
+            status: "00",
+            message: "Success",
+            data: result.data
+        });
+        } else {
+        const result = await getAllTerminalLatestMonitoringAllStationServiceByProject({
+            c_project: req.body.c_project
         });
 
         if (result.code !== 0) throw result;
@@ -27,6 +30,10 @@ console.log("Start c_project", c_project)
             message: "Success",
             data: result.data
         });
+        }
+
+
+        
 
     } catch (err) {
         await saveError(err.code, err.message, JSON.stringify(err));

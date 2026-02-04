@@ -1,19 +1,17 @@
 import db from '../../config/database.js';
 
-export const getDeviceByStation = async (c_project, c_station) => {
+export const getTerminalByStation = async (c_project, c_station) => {
     try {
         const result = await db
         .select(
-            "d.c_project",
+            "t.c_project",
             "p.n_project_name",
             "p.n_project_desc",
 
-            "d.c_device",
-            "d.n_device_name",
-            "d.c_device_type",
-            "d.c_direction",
-
             "t.c_terminal_sn",
+            "t.c_terminal_type",
+            "t.c_terminal_01",
+            "t.c_terminal_02",
             db.raw("TRIM(t.c_station) AS c_station"),
             "st.n_station",
 
@@ -35,25 +33,17 @@ export const getDeviceByStation = async (c_project, c_station) => {
             .andOnNull("t.d_deleted_at");
         })
 
-        // terminal → device
-        .leftJoin({ d: "master.t_m_device" }, function () {
-            this.on("d.c_terminal_sn", "=", "t.c_terminal_sn")
-            .andOn("d.c_project", "=", "t.c_project")
-            .andOn("d.b_active", "=", db.raw("true"))
-            .andOnNull("d.d_deleted_at");
-        })
-
-        // device → monitoring (LATEST PER TERMINAL)
+        // 🔥 FIX PALING PENTING ADA DI SINI
         .leftJoin(
             db.raw(`
             (
-                SELECT DISTINCT ON (c_terminal_sn)
+                SELECT DISTINCT ON (c_project, c_terminal_sn)
                 c_project,
                 c_terminal_sn,
                 d_monitoring,
                 n_status
                 FROM opr.t_d_monitoring_device
-                ORDER BY c_terminal_sn, d_monitoring DESC
+                ORDER BY c_project, c_terminal_sn, d_monitoring DESC
             ) m
             `),
             function () {
@@ -71,14 +61,14 @@ export const getDeviceByStation = async (c_project, c_station) => {
 
         .where("st.b_active", true)
         .whereNull("st.d_deleted_at")
-        .andWhereRaw("TRIM(st.c_station) = TRIM(?)", [c_station])
         .andWhere("st.c_project", c_project)
+        .andWhereRaw("TRIM(st.c_station) = TRIM(?)", [c_station])
 
-        .orderBy("d.c_device", "asc");
+        .orderBy("t.c_terminal_sn", "asc");
 
         return { code: 0, message: result };
 
     } catch (err) {
-        return { code: "2110", data: err };
+        return { code: "2120", data: err };
     }
 };
