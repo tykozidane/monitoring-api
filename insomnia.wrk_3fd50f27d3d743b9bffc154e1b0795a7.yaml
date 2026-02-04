@@ -322,34 +322,6 @@ collection:
                 send: true
                 store: true
               rebuildPath: true
-          - url: http://36.66.3.44:7015/api/v1/output/all-station
-            name: GET ALL STATION
-            meta:
-              id: req_09f393c914e74f419a6052d3c15579ca
-              created: 1766487308428
-              modified: 1766487561527
-              isPrivate: false
-              description: ""
-              sortKey: -1766220259258.5
-            method: POST
-            body:
-              mimeType: application/json
-              text: ""
-            headers:
-              - name: Content-Type
-                value: application/json
-              - name: User-Agent
-                value: insomnia/12.2.0
-                description: ""
-                disabled: false
-            settings:
-              renderRequestBody: true
-              encodeUrl: true
-              followRedirects: global
-              cookies:
-                send: true
-                store: true
-              rebuildPath: true
           - url: http://36.66.3.44:7015/api/v1/output/device-by-project
             name: GET DEVICE BY PROJECT
             meta:
@@ -365,37 +337,6 @@ collection:
               text: |-
                 {
                 	"c_project": "2"
-                }
-            headers:
-              - name: Content-Type
-                value: application/json
-              - name: User-Agent
-                value: insomnia/12.2.0
-                description: ""
-                disabled: false
-            settings:
-              renderRequestBody: true
-              encodeUrl: true
-              followRedirects: global
-              cookies:
-                send: true
-                store: true
-              rebuildPath: true
-          - url: http://36.66.3.44:7015/api/v1/output/device-by-station
-            name: GET DEVICE BY STATION
-            meta:
-              id: req_9d007a2403464243b8ff5cfa00de9635
-              created: 1766487407966
-              modified: 1767777558782
-              isPrivate: false
-              description: ""
-              sortKey: -1766020070289.375
-            method: POST
-            body:
-              mimeType: application/json
-              text: |-
-                {
-                	"c_station": "HAR"
                 }
             headers:
               - name: Content-Type
@@ -452,6 +393,66 @@ collection:
           sortKey: -1769153049547
           description: ""
         children:
+          - url: localhost:5000/api/v1/output/all-station
+            name: GET ALL STATION
+            meta:
+              id: req_09f393c914e74f419a6052d3c15579ca
+              created: 1766487308428
+              modified: 1770181499235
+              isPrivate: false
+              description: ""
+              sortKey: -1769153060602
+            method: POST
+            body:
+              mimeType: application/json
+              text: ""
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.2.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: localhost:5000/api/v1/output/device-by-station
+            name: GET DEVICE BY STATION
+            meta:
+              id: req_9d007a2403464243b8ff5cfa00de9635
+              created: 1766487407966
+              modified: 1770183299342
+              isPrivate: false
+              description: ""
+              sortKey: -1769153060502
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"c_station": "SUD",
+                	"c_project" : "KCI"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.2.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
           - url: localhost:5000/api/v1/monit/device-send-data
             name: API Monitoring Data LOCAL
             meta:
@@ -539,7 +540,7 @@ collection:
             meta:
               id: req_92e26dbf0acb4eaeab8fbd742cc97968
               created: 1769153060702
-              modified: 1769155023277
+              modified: 1770110281146
               isPrivate: false
               description: ""
               sortKey: -1769153060702
@@ -548,8 +549,6 @@ collection:
               mimeType: application/json
               text: |-
                 {
-                	"c_project" : "KCI",
-                	"c_station" : ""
                 }
             headers:
               - name: Content-Type
@@ -691,6 +690,76 @@ collection:
                 send: true
                 store: true
               rebuildPath: true
+          - url: localhost:5000/api/v1/terminal/get-terminal-config
+            name: Get Terminal Config
+            meta:
+              id: req_d882114495104ea7b87bafc991de27c2
+              created: 1770113433382
+              modified: 1770113579992
+              isPrivate: false
+              description: ""
+              sortKey: -1769400942778.75
+            method: POST
+            body:
+              mimeType: application/json
+              text: |
+                {
+                  "c_project": "KCI",
+                  "c_terminal_sn": "1010-1609"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.3.0
+                description: ""
+                disabled: false
+            authentication:
+              type: basic
+              useISO88591: false
+              username: hisnutech
+              password: nutech123
+              disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: localhost:5000/api/v1/output/terminal-by-station
+            name: GET TERMINAL BY STATION
+            meta:
+              id: req_6cfea3e4b3cc43ccb9ea983bbe072cf8
+              created: 1770183767323
+              modified: 1770184134670
+              isPrivate: false
+              description: ""
+              sortKey: -1768809710817
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"c_station": "JUA",
+                	"c_project" : "KCI"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.2.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
       - name: DEV
         meta:
           id: fld_79550cca0fd247a591a91e0d880915e9
@@ -786,7 +855,7 @@ collection:
             meta:
               id: req_6b36eb9b99e8442898905ff5b5e19c40
               created: 1769660558955
-              modified: 1769660574579
+              modified: 1770018442311
               isPrivate: false
               description: ""
               sortKey: -1769571775961
@@ -804,7 +873,7 @@ collection:
 
                   "timestamp": 1745817527,
 
-                  "voltageac": 27.2,                 
+                  "voltageac": 10.2,                 
                   "temperature": 38.5,              
                   "temperature_controller": 47.8,   
                   "temperature_epc": 52.3,          
@@ -876,6 +945,172 @@ collection:
             headers:
               - name: User-Agent
                 value: insomnia/12.3.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: 192.168.62.90:4003/api/v1/terminal/get-terminal-config
+            name: Get Terminal Config DEV
+            meta:
+              id: req_efb1ff2269ed496e9b84f89479639341
+              created: 1770116268278
+              modified: 1770116291389
+              isPrivate: false
+              description: ""
+              sortKey: -1769616200429
+            method: POST
+            body:
+              mimeType: application/json
+              text: |
+                {
+                  "c_project": "KCI",
+                  "c_terminal_sn": "1010-1609"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.3.0
+                description: ""
+                disabled: false
+            authentication:
+              type: basic
+              useISO88591: false
+              username: hisnutech
+              password: nutech123
+              disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: 192.168.62.90:4003/api/v1/output/all-terminal-monitoring-latest
+            name: All Terminal Monitoring Latest DEV
+            meta:
+              id: req_512c8f4e566c4a818e5588aed75338a2
+              created: 1770187885432
+              modified: 1770187969483
+              isPrivate: false
+              description: ""
+              sortKey: -1769571775861
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.3.0
+                description: ""
+                disabled: false
+            authentication:
+              type: basic
+              useISO88591: false
+              username: hisnutech
+              password: nutech123
+              disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: 192.168.62.90:4003/api/v1/output/all-station
+            name: GET ALL STATION DEV
+            meta:
+              id: req_8ab7449a38614bf3a0eb37c0d228db96
+              created: 1770187893323
+              modified: 1770187960556
+              isPrivate: false
+              description: ""
+              sortKey: -1769571775836
+            method: POST
+            body:
+              mimeType: application/json
+              text: ""
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.2.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: 192.168.62.90:4003/api/v1/output/device-by-station
+            name: GET DEVICE BY STATION DEV
+            meta:
+              id: req_8d05b58052f0451d9c18f10dc5e59e5c
+              created: 1770187899208
+              modified: 1770187976338
+              isPrivate: false
+              description: ""
+              sortKey: -1769571775811
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"c_station": "SUD",
+                	"c_project" : "KCI"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.2.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: 192.168.62.90:4003/api/v1/output/terminal-by-station
+            name: GET TERMINAL BY STATION DEV
+            meta:
+              id: req_f54ca25f60264e42a44c525f1d3adc79
+              created: 1770187906042
+              modified: 1770187985454
+              isPrivate: false
+              description: ""
+              sortKey: -1769571775761
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"c_station": "JUA",
+                	"c_project" : "KCI"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.2.0
                 description: ""
                 disabled: false
             settings:
