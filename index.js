@@ -7,9 +7,10 @@ import monit from './app/controller/monit.routes.js';
 import output from './app/controller/output/output.routes.js'
 import terminal from './app/controller/terminal/terminal.routes.js'
 import basicAuth from './app/middleware/basic-auth.js';
+import cors from 'cors';
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
+app.use(cors());
 
 const originalSend = app.response.send;
 app.response.send = function sendOverWrite(body) {
