@@ -12,8 +12,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+<<<<<<< HEAD
     "@elastic/elasticsearch": "^9.2.0",
     "cors": "^2.8.6",
+=======
+    "@elastic/elasticsearch": "^9.2.1",
+>>>>>>> 7defc1887ceaf921957203cf384ea7538a640f29
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "express-winston": "^4.2.0",
