@@ -1,43 +1,32 @@
-import db from '../../config/database.js';
+import db from "../../config/database.js";
 
-export const updateTerminal = async (payload, updatedBy) => {
+export const updateTerminal = async (
+    c_terminal_sn,
+    updatePayload,
+    updatedBy
+) => {
     try {
-        const {
-        c_terminal_sn,
-        ...updateData
-        } = payload;
-
         const result = await db("master.t_m_terminal")
         .where("c_terminal_sn", c_terminal_sn)
         .whereNull("d_deleted_at")
         .update({
-            ...updateData,
+            ...updatePayload,
             d_updated_at: db.fn.now(),
             n_updated_by: updatedBy
         })
-        .returning([
-            "c_terminal_sn",
-            "c_terminal_01",
-            "c_terminal_02",
-            "c_terminal_type",
-            "c_project",
-            "c_station",
-            "n_terminal_name",
-            "n_lat",
-            "n_lng",
-            "b_active",
-            "d_updated_at",
-            "n_updated_by"
-        ]);
+        .returning("*");
 
         if (result.length === 0) {
         return {
-            code: "4040",
+            code: "4041",
             message: "Terminal not found or already deleted"
         };
         }
 
-        return { code: 0, message: result[0] };
+        return {
+        code: 0,
+        message: result[0]
+        };
 
     } catch (err) {
         return {
