@@ -1,4 +1,4 @@
-import db from "../../config/database.js";
+import db from "../config/database.js";
 
 export const validateStation = async (req, res, next) => {
     try {

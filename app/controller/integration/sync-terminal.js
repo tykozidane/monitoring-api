@@ -4,7 +4,7 @@ import {
 } from "../../config/response.js";
 
 import { saveError } from "../../service/error-service.js";
-import { insertItem } from "../../service/terminal/sync-terminal-service.js";
+import { insertItem } from "../../service/integration/sync-terminal-service.js";
 
 const controller = async (req, res) => {
     try {

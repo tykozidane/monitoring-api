@@ -14,6 +14,13 @@ const getStatus = (value, dt) => {
     return "normal";
 };
 
+const getStatusUpOnly = (value, dt) => {
+    if (dt.l_danger_up !== null && value >= dt.l_danger_up) return "danger";
+    if (dt.l_warning_up !== null && value >= dt.l_warning_up) return "warning";
+    return "normal";
+};
+
+
 /**
  * Validasi timestamp device vs waktu server
  * @param {number} deviceTimestamp - unix timestamp (detik)
@@ -126,24 +133,120 @@ export const saveMonitoringGateService = async (payload) => {
                 d_deleted_at: null
             });
 
-        /* =========================
-            3. BENTUK DATA (jsonb)
-        ========================== */
-        const monitoringData = [];
+/* =========================
+    3. BENTUK DATA (jsonb)
+========================= */
+const monitoringData = [];
 
-        for (const dt of dataTypes) {
-            const value = body[dt.c_data_type];
+/* Ambil setting notes_disk */
+const diskSetting = await trx("master.t_m_setting")
+    .where({
+        c_project,
+        c_setting_key: "notes_disk",
+        b_active: true
+    })
+    .first();
 
-            if (value === undefined) continue;
+const diskNoteTemplate = diskSetting?.c_setting_value || "(usage) dari (total)";
 
+for (const dt of dataTypes) {
+
+    /* =========================
+        SYSTEM
+    ========================== */
+    if (dt.c_collect_type === "system") {
+
+        const value = body[dt.c_data_type];
+        if (value === undefined) {
             monitoringData.push({
                 c_data_type: dt.c_data_type,
-                value: value,
+                value: 0,
                 measure: dt.n_measure || "",
-                status: getStatus(value, dt)
+                status: "no_data",
+                notes: "Data tidak ditemukan pada request body"
             });
-        }
+            continue;
+        };
 
+        monitoringData.push({
+            c_data_type: dt.c_data_type,
+            value,
+            measure: dt.n_measure || "",
+            status: getStatus(value, dt),
+            notes: null
+        });
+    }
+
+    /* =========================
+        APPLICATION
+    ========================== */
+    if (dt.c_collect_type === "application") {
+        console.log("Processing application data type:", dt.c_data_type);
+        const direction = parseInt(dt.n_measure);
+        const found = body.app?.find(a => a.direction === direction);
+
+        if (!found) continue;
+
+        const status = found.status < 0 ? "danger" : "normal";
+        const measure = found.status < 0 ? "NOT RUNNING" : "RUNNING";
+
+        monitoringData.push({
+            c_data_type: dt.c_data_type,
+            value: 0,
+            measure,
+            status,
+            notes: found.description || null
+        });
+    }
+
+    /* =========================
+        DISK
+    ========================== */
+    if (dt.c_collect_type === "disk") {
+        console.log("Processing disk data type:", dt.c_data_type);
+        const drive = dt.n_measure; // C / D
+        const found = body.disk?.find(d => d.drive === drive);
+
+        if (!found) continue;
+
+        const value = found.usage_percentage;
+        const status = getStatusUpOnly(value, dt);
+
+        const notes = diskNoteTemplate
+            .replace("(usage)", found.usage)
+            .replace("(total)", found.total);
+
+        monitoringData.push({
+            c_data_type: dt.c_data_type,
+            value,
+            measure: "%",
+            status,
+            notes
+        });
+    }
+
+    /* =========================
+        COUNTER  
+    ========================== */
+    if (dt.c_collect_type === "counter") {
+
+        if (!Array.isArray(body.counter)) continue;
+
+        body.counter.forEach((val, index) => {
+
+            const status = getStatusUpOnly(val, dt);
+
+            monitoringData.push({
+                c_data_type: `COUNTER_${index + 1}`,
+                value: val,
+                measure: "count",
+                status,
+                notes: null
+            });
+        });
+    }
+}
+    // console.log("Monitoring Data:", monitoringData);
         /* =========================
             4. BENTUK DEVICES (jsonb) - DINAMIS
             ========================== */
@@ -257,8 +360,8 @@ export const saveMonitoringGateService = async (payload) => {
         await trx.commit();
         // console.log("Before elasticDoc:", elasticDoc);
         // setelah trx.commit()
-        const elasticResult = await indexMonitoringData(elasticDoc);
-        console.log("Elastic result:", elasticResult);
+        // const elasticResult = await indexMonitoringData(elasticDoc);
+        // console.log("Elastic result:", elasticResult);
         
         return { code: 0, message: "Monitoring gate berhasil disimpan" };
 

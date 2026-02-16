@@ -7,6 +7,7 @@ export const insertItem = async (payload, createdBy, signature) => {
         const {
         item_serial_code,
         client_name,
+        serial_number,
         model_code,
         model_name,
         station_code,
@@ -49,7 +50,8 @@ export const insertItem = async (payload, createdBy, signature) => {
             b_mapping: false,
             b_active: true,
             n_created_by: createdBy,
-            c_signature: signature
+            c_signature: signature,
+            serial_number
         })
         .returning("*");
 

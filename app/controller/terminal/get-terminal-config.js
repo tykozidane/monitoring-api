@@ -52,7 +52,7 @@ const controller = async (req, res) => {
             ...settings,
 
             c_terminal_sn: terminal.c_terminal_sn,
-            c_project: terminal.c_project.toLowerCase(),
+            c_project: terminal.c_project.toUpperCase(),
             c_terminal_type: terminal.c_terminal_type,
             i_terminal_type: terminal.i_terminal_type || null,
             c_station: terminal.c_station,
