@@ -3,20 +3,10 @@ import basicAuth from '../../middleware/basic-auth.js';
 import { validateTerminal } from '../../middleware/validate-terminal.js';
 import { validateSignature } from '../../middleware/validate-signature.js';
 import { validateProject } from '../../middleware/validate-project.js';
-import getStationMiniController from "./get-station-mini.js";
-import getAllStationMiniByProject from "./get-all-station-mini.js";
-
+import getAllProject from './get-all-project.js';
 const router = express.Router();
 
-router.get(
-    "/mini",
-    basicAuth,
-    getStationMiniController
-);
-router.get(
-    "/all-station-mini",
-    getAllStationMiniByProject
-);
+router.get('/get-all-project', basicAuth, getAllProject);
 
 
 export default router;

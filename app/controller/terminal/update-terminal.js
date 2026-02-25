@@ -13,8 +13,6 @@ const ALLOWED_UPDATE_FIELDS = [
     "c_project",
     "c_station",
     "n_terminal_name",
-    "a_data",
-    "a_device",
     "n_lat",
     "n_lng",
     "b_active"

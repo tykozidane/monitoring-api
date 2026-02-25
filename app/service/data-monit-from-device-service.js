@@ -5,19 +5,19 @@ import { indexMonitoringData } from "../service/elastic-service.js";
  * Tentukan status berdasarkan threshold
  */
 const getStatus = (value, dt) => {
-    if (dt.l_danger_up !== null && value >= dt.l_danger_up) return "danger";
-    if (dt.l_danger_down !== null && value <= dt.l_danger_down) return "danger";
+    if (dt.l_danger_up !== null && value >= dt.l_danger_up) return "DANGER";
+    if (dt.l_danger_down !== null && value <= dt.l_danger_down) return "DANGER";
 
-    if (dt.l_warning_up !== null && value >= dt.l_warning_up) return "warning";
-    if (dt.l_warning_down !== null && value <= dt.l_warning_down) return "warning";
+    if (dt.l_warning_up !== null && value >= dt.l_warning_up) return "WARNING";
+    if (dt.l_warning_down !== null && value <= dt.l_warning_down) return "WARNING";
 
-    return "normal";
+    return "NORMAL";
 };
 
 const getStatusUpOnly = (value, dt) => {
-    if (dt.l_danger_up !== null && value >= dt.l_danger_up) return "danger";
-    if (dt.l_warning_up !== null && value >= dt.l_warning_up) return "warning";
-    return "normal";
+    if (dt.l_danger_up !== null && value >= dt.l_danger_up) return "DANGER";
+    if (dt.l_warning_up !== null && value >= dt.l_warning_up) return "WARNING";
+    return "NORMAL";
 };
 
 
@@ -79,8 +79,8 @@ export const resolveOverallStatus = (dataArr = [], deviceArr = []) => {
     }
 
     for (const dev of deviceArr) {
-        // data_not_found dianggap warning (opsional, bisa kamu ubah)
-        const status = dev.status === "data_not_found" ? "warning" : dev.status;
+        // DATA_NOT_FOUND dianggap warning (opsional, bisa kamu ubah)
+        const status = dev.status === "DATA_NOT_FOUND" ? "WARNING" : dev.status;
         checkStatus(status);
     }
 
@@ -137,7 +137,7 @@ export const saveMonitoringGateService = async (payload) => {
     3. BENTUK DATA (jsonb)
 ========================= */
 const monitoringData = [];
-
+const elasticData = {}; // untuk elastic, bentuknya flat { data_type: value, ... }
 /* Ambil setting notes_disk */
 const diskSetting = await trx("master.t_m_setting")
     .where({
@@ -162,26 +162,30 @@ for (const dt of dataTypes) {
                 c_data_type: dt.c_data_type,
                 value: 0,
                 measure: dt.n_measure || "",
-                status: "no_data",
+                status: "NO_DATA",
                 notes: "Data tidak ditemukan pada request body"
             });
+            elasticData[dt.c_data_type] = null; // atau bisa dihapus dari elasticData
+            elasticData[`${dt.c_data_type}_status`] = "NO_DATA"; // tambahan untuk status
             continue;
         };
-
+        const status = getStatus(value, dt);
         monitoringData.push({
             c_data_type: dt.c_data_type,
             value,
             measure: dt.n_measure || "",
-            status: getStatus(value, dt),
+            status: status,
             notes: null
         });
+        elasticData[dt.c_data_type] = value;
+        elasticData[`${dt.c_data_type}_status`] = status; // tambahan untuk status
     }
 
     /* =========================
         APPLICATION
     ========================== */
     if (dt.c_collect_type === "application") {
-        console.log("Processing application data type:", dt.c_data_type);
+        // console.log("Processing application data type:", dt.c_data_type);
         const direction = parseInt(dt.n_measure);
         const found = body.app?.find(a => a.direction === direction);
 
@@ -197,13 +201,15 @@ for (const dt of dataTypes) {
             status,
             notes: found.description || null
         });
+        elasticData[dt.c_data_type] = measure;
+        // elasticData[`${dt.c_data_type}_status`] = status; // tambahan untuk status
     }
 
     /* =========================
         DISK
     ========================== */
     if (dt.c_collect_type === "disk") {
-        console.log("Processing disk data type:", dt.c_data_type);
+        // console.log("Processing disk data type:", dt.c_data_type);
         const drive = dt.n_measure; // C / D
         const found = body.disk?.find(d => d.drive === drive);
 
@@ -223,6 +229,8 @@ for (const dt of dataTypes) {
             status,
             notes
         });
+        elasticData[dt.c_data_type] = value;
+        elasticData[`${dt.c_data_type}_status`] = status; // tambahan untuk status
     }
 
     /* =========================
@@ -243,6 +251,8 @@ for (const dt of dataTypes) {
                 status,
                 notes: null
             });
+            elasticData[`counter_${index + 1}`] = val;
+            elasticData[`counter_${index + 1}_status`] = status; // tambahan untuk status
         });
     }
 }
@@ -272,8 +282,10 @@ for (const dt of dataTypes) {
                         c_serial_number: md.c_serial_number,
                         c_device_type: md.c_device_type,
                         c_direction: md.c_direction,
-                        status: "data_not_found"
+                        status: "DATA_NOT_FOUND"
                     });
+                    
+                    elasticData[md.c_device] = null;
                     continue;
                 }
 
@@ -285,6 +297,7 @@ for (const dt of dataTypes) {
                     c_direction: bodyDevice.direction ?? md.c_direction ?? null,
                     status: bodyDevice.status === 0 ? "normal" : "error"
                 });
+                elasticData[md.c_device] = bodyDevice.status === 0 ? "normal" : "error";
             }
 
         /* =========================
@@ -309,10 +322,9 @@ for (const dt of dataTypes) {
                 c_terminal_type: terminal.c_terminal_type,
                 n_status,
                 d_monitoring: monitoringTime.toISOString(),
-                data: monitoringData,
-                devices: devices,
-                raw_data: payload   // opsional, bisa dihapus kalau berat
+                ...elasticData
             };
+            // console.log("Elastic Doc to be indexed:", elasticDoc);
         if (Number(total.total) < 10) {
 
             /* =========================
@@ -360,8 +372,8 @@ for (const dt of dataTypes) {
         await trx.commit();
         // console.log("Before elasticDoc:", elasticDoc);
         // setelah trx.commit()
-        // const elasticResult = await indexMonitoringData(elasticDoc);
-        // console.log("Elastic result:", elasticResult);
+        const elasticResult = await indexMonitoringData(elasticDoc);
+        console.log("Elastic result:", elasticResult);
         
         return { code: 0, message: "Monitoring gate berhasil disimpan" };
 
