@@ -10,6 +10,7 @@ import getDataMappingTerminalSync from './get-data-mapping-terminal-sync.js';
 import getFreeTerminal from './get-free-terminal.js';
 import getTerminalType from './get-terminal-type.js';
 import addTerminal from './add-terminal.js';
+import spareGate from './spare-gate.js';
 import { validateTerminal } from '../../middleware/validate-terminal.js';
 import { validateSignature } from '../../middleware/validate-signature.js';
 import { getTerminal } from '../../service/terminal/terminal-config-service.js';
@@ -26,6 +27,6 @@ router.post('/get-data-mapping-terminal-sync', basicAuth, getDataMappingTerminal
 router.get('/get-free-terminal', basicAuth, getFreeTerminal);
 router.post('/add-terminal', basicAuth, addTerminal);
 router.get('/type',basicAuth, getTerminalType);
-
+router.get('/spare-gate', basicAuth, spareGate);
 
 export default router;

@@ -1,31 +1,31 @@
 import {
     response_success_data,
     response_error
-} from "../config/response.js";
+} from "../../config/response.js";
 
-import { saveError } from "../service/error-service.js";
-import { saveTransactionMonitoringService } from "../service/transaction-monit-service.js";
+import { saveError } from "../../service/error-service.js";
+import { getSpareGateService } from "../../service/terminal/spare-gate-service.js";
 
 const controller = async (req, res) => {
     try {
 
-        const { c_project, c_terminal_sn, Data } = req.body;
+        const { c_station, c_project } = req.query;
 
-        if (!c_project || !c_terminal_sn) {
+        if (!c_station || !c_project) {
             throw {
-                code: "4001",
-                message: "c_project and c_terminal_sn are required"
+                code: "4000",
+                message: "c_station and c_project are required"
             };
         }
 
-        const result = await saveTransactionMonitoringService(req.body);
+        const result = await getSpareGateService(c_station, c_project);
 
         if (result.code !== 0) throw result;
 
         return response_success_data({
             res,
             status: "00",
-            message: "Transaction monitoring saved successfully",
+            message: "Success",
             data: result.message
         });
 
