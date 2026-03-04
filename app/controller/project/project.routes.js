@@ -4,9 +4,10 @@ import { validateTerminal } from '../../middleware/validate-terminal.js';
 import { validateSignature } from '../../middleware/validate-signature.js';
 import { validateProject } from '../../middleware/validate-project.js';
 import getAllProject from './get-all-project.js';
+import jwtAuthMiddleware from '../../middleware/jwt-auth.js';
 const router = express.Router();
 
-router.get('/get-all-project', basicAuth, getAllProject);
+router.get('/get-all-project', jwtAuthMiddleware, getAllProject);
 
 
 export default router;

@@ -3,22 +3,24 @@ import basicAuth from '../../middleware/basic-auth.js';
 import getDeviceType from './get-device-type.js';
 import getDeviceByTerminalController from './get-device-by-terminal.js';
 import createDeviceTypeController from './create-device-type.js';
+import jwtAuthMiddleware from '../../middleware/jwt-auth.js';
 import { validateTerminal } from '../../middleware/validate-terminal.js';
 import { validateSignature } from '../../middleware/validate-signature.js';
 const router = express.Router();
 
 router.post(
     "/device-type",
+    jwtAuthMiddleware,
     getDeviceType
 );
 router.get(
     "/get-device-by-terminal",
-    basicAuth,
+    jwtAuthMiddleware,
     getDeviceByTerminalController
 );
 router.post(
     "/create-device-type",
-    basicAuth,
+    jwtAuthMiddleware,
     createDeviceTypeController
 );
 export default router;

@@ -11,22 +11,25 @@ import getFreeTerminal from './get-free-terminal.js';
 import getTerminalType from './get-terminal-type.js';
 import addTerminal from './add-terminal.js';
 import spareGate from './spare-gate.js';
+import rollbackRealeseTerminal from './rollback-release-terminal.js';
 import { validateTerminal } from '../../middleware/validate-terminal.js';
 import { validateSignature } from '../../middleware/validate-signature.js';
 import { getTerminal } from '../../service/terminal/terminal-config-service.js';
+import jwtAuthMiddleware from '../../middleware/jwt-auth.js';
 const router = express.Router();
 
 
-router.post('/get-terminal-config', basicAuth, terminalConfig);
-router.post('/update-terminal', validateTerminal, updateTerminal);
-router.get('/get-sync-terminal-status', getSyncTerminalStatus);
-router.post('/get-terminal-detail',validateTerminal, getTerminalDetailBySn);
-router.post('/release-terminal', basicAuth, releaseTerminal);
-router.post('/mapping-terminal', basicAuth, mappingTerminal);
-router.post('/get-data-mapping-terminal-sync', basicAuth, getDataMappingTerminalSync);
-router.get('/get-free-terminal', basicAuth, getFreeTerminal);
-router.post('/add-terminal', basicAuth, addTerminal);
-router.get('/type',basicAuth, getTerminalType);
-router.get('/spare-gate', basicAuth, spareGate);
+router.post('/get-terminal-config', jwtAuthMiddleware, terminalConfig);
+router.post('/update-terminal',jwtAuthMiddleware, validateTerminal, updateTerminal);
+router.get('/get-sync-terminal-status',jwtAuthMiddleware, getSyncTerminalStatus);
+router.post('/get-terminal-detail',jwtAuthMiddleware, validateTerminal, getTerminalDetailBySn);
+router.post('/release-terminal', jwtAuthMiddleware, releaseTerminal);
+router.post('/mapping-terminal', jwtAuthMiddleware, mappingTerminal);
+router.post('/get-data-mapping-terminal-sync', jwtAuthMiddleware, getDataMappingTerminalSync);
+router.get('/get-free-terminal', jwtAuthMiddleware, getFreeTerminal);
+router.post('/add-terminal', jwtAuthMiddleware, addTerminal);
+router.get('/type',jwtAuthMiddleware, getTerminalType);
+router.get('/spare-gate', jwtAuthMiddleware, spareGate);
+router.post('/rollback-release-terminal', jwtAuthMiddleware, rollbackRealeseTerminal);
 
 export default router;

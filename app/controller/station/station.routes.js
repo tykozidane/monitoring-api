@@ -5,16 +5,18 @@ import { validateSignature } from '../../middleware/validate-signature.js';
 import { validateProject } from '../../middleware/validate-project.js';
 import getStationMiniController from "./get-station-mini.js";
 import getAllStationMiniByProject from "./get-all-station-mini.js";
+import jwtAuthMiddleware from '../../middleware/jwt-auth.js';
 
 const router = express.Router();
 
 router.get(
     "/mini",
-    basicAuth,
+    jwtAuthMiddleware,
     getStationMiniController
 );
 router.get(
     "/all-station-mini",
+    jwtAuthMiddleware,
     getAllStationMiniByProject
 );
 

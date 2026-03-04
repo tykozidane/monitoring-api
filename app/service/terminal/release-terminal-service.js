@@ -36,7 +36,6 @@ export const releaseTerminalService = async (
                 c_model_code: null,
                 c_model_name: null,
                 c_item_serial_code: null,
-                i_sync_id: null,
                 d_updated_at: trx.fn.now(),
                 n_updated_by: updatedBy
             });

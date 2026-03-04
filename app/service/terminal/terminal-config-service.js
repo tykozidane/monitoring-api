@@ -37,11 +37,21 @@ export const getSettingsByProject = async (c_project) => {
  * Get terminal
  */
 export const getTerminal = async (c_terminal_sn, c_project) => {
-    return db("master.t_m_terminal")
-    .where("c_terminal_sn", c_terminal_sn)
-    .where("c_project", c_project.toUpperCase())
-    .where("b_active", true)
-    .whereNull("d_deleted_at")
+    return db("master.t_m_terminal as t")
+    .select(
+        "t.*",
+        "tt.n_terminal_name as terminal_type_name",
+        "tt.i_terminal_type"
+    )
+    .leftJoin("master.t_m_terminal_type as tt", function () {
+        this.on("t.c_terminal_type", "=", "tt.c_terminal_type")
+            .andOn("t.c_project", "=", "tt.c_project");
+    })
+    .where("t.c_terminal_sn", c_terminal_sn)
+    .where("t.c_project", c_project.toUpperCase())
+    .where("t.b_active", true)
+    .whereNotNull("tt.i_id")
+    .whereNull("t.d_deleted_at")
     .first();
 };
 
