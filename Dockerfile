@@ -4,7 +4,6 @@ FROM node:20-alpine
 WORKDIR /app
 
 COPY package*.json ./
-COPY /app/storage ./storage
 RUN npm install --production
 
 COPY . .
