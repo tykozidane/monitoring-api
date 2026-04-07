@@ -16,7 +16,7 @@ const controller = async (req, res) => {
             message: "c_station and c_project are required"
         };
         }
-
+        
         const result = await getTerminalByStation(c_station, c_project);
 
         if (result.code !== 0) throw result;

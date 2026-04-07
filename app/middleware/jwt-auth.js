@@ -44,10 +44,10 @@ const jwtAuthMiddleware = (req, res, next) => {
         }
 
         // simpan user ke request
-        req.user = {
-            username: decoded.username
-        };
-
+        // req.user = {
+        //     username: decoded.username
+        // };
+        req.username = decoded.username; // untuk kompatibilitas dengan basicAuth
         next();
 
     } catch (err) {

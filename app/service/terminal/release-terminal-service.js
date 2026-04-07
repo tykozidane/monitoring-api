@@ -39,7 +39,13 @@ export const releaseTerminalService = async (
                 d_updated_at: trx.fn.now(),
                 n_updated_by: updatedBy
             });
-
+        
+        // Update b_mapping di sync terminal
+        await trx("sync.t_m_sync_terminal")
+            .where({ serial_number: c_terminal_sn })
+            .update({
+                b_mapping: false
+            });
         await trx.commit();
 
         return {

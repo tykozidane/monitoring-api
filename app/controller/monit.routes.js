@@ -5,6 +5,7 @@ import dataMonitMini from './data-monit-mini.js';
 import dataMonitFromDevice from './data-monit-from-device.js';
 import transactionMonitFromDevice from './transaction-monit-from-device.js';
 import getConfigController from './get-config-controller.js';
+import dataMonitServer from './data-monit-server.js';
 import basicAuth from '../middleware/basic-auth.js';
 const router = express.Router();
 
@@ -14,5 +15,6 @@ router.post('/device-send-data',basicAuth, dataMonitFromDevice);   //New Concept
 router.post('/device-send-transaction',basicAuth, transactionMonitFromDevice);   //New Concept
 router.post('/mini',express.text(), dataMonitMini);
 router.get('/config-controller', basicAuth, getConfigController);
+router.post('/trigger-monit-server', basicAuth, dataMonitServer);
 
 export default router;

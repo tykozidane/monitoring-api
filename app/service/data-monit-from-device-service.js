@@ -373,7 +373,7 @@ for (const dt of dataTypes) {
         // console.log("Before elasticDoc:", elasticDoc);
         // setelah trx.commit()
         const elasticResult = await indexMonitoringData(elasticDoc);
-        console.log("Elastic result:", elasticResult);
+        // console.log("Elastic result:", elasticResult);
         
         return { code: 0, message: "Monitoring gate berhasil disimpan" };
 

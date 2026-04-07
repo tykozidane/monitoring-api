@@ -1,4 +1,4 @@
-import elasticClient from "../config/elastic.js";
+import elasticClient from "../config/elasticsearch.js";
 
 export const saveTransactionMonitoringService = async (payload) => {
     try {

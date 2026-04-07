@@ -16,6 +16,7 @@ import basicAuth from './app/middleware/basic-auth.js';
 import cors from 'cors';
 import db from "./app/config/database.js";
 import elasticClient from "./app/config/elasticsearch.js";
+import { startMonitoringServerCron } from "./app/cron/monitoring-server-cron.js";
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
@@ -51,6 +52,9 @@ router.use("/device", device);
 router.use("/project", project);
 router.use("/app", appRoutes);
 router.use("/auth", auth);
+
+//CRON
+startMonitoringServerCron();
 
 const port = process.env.APP_PORT || 5000;
 app.listen(port, () => {
