@@ -4,8 +4,8 @@ FROM node:20-alpine
 WORKDIR /app
 
 COPY package*.json ./
-COPY --from=builder /app/storage ./storage
-COPY --from=builder /app/log-loki ./log-loki
+COPY /app/storage ./storage
+COPY /app/log-loki ./log-loki
 RUN npm install --production
 
 COPY . .
