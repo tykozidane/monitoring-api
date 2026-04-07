@@ -7,10 +7,10 @@ COPY package*.json ./
 RUN npm install --production
 
 COPY . .
-
-EXPOSE 4000
-
 ENV HOSTNAME "0.0.0.0"
 ENV PORT 4000
+EXPOSE 4000
+
+
 
 CMD ["node", "index.js"]
