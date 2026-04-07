@@ -5,7 +5,6 @@ WORKDIR /app
 
 COPY package*.json ./
 COPY /app/storage ./storage
-COPY /app/log-loki ./log-loki
 RUN npm install --production
 
 COPY . .
