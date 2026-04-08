@@ -87,9 +87,10 @@ export const mappingTerminalService = async (payload, updatedBy) => {
                     b_active: dev.b_active,
                     n_created_by: updatedBy
                 });
-
+                console.log(`Insert device ${dev.c_serial_number}`);
             } else {
                 // UPDATE
+                console.log(`Update device ${dev.c_serial_number}`);
                 await trx("master.t_m_device")
                     .where({ c_serial_number: exist.c_serial_number })
                     .update({
@@ -111,7 +112,7 @@ export const mappingTerminalService = async (payload, updatedBy) => {
         for (const exist of existingDevices) {
 
             if (!bodySerials.includes(exist.c_serial_number)) {
-
+                console.log(`Non active device ${exist.c_serial_number}`);
                 await trx("master.t_m_device")
                     .where({ i_id: exist.i_id })
                     .update({
