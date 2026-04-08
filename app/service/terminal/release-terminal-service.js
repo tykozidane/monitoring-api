@@ -44,7 +44,7 @@ export const releaseTerminalService = async (
         await trx("sync.t_m_sync_terminal")
             .where({ serial_number: c_terminal_sn })
             .update({
-                b_mapping: false
+                b_mapping: true
             });
         await trx.commit();
 

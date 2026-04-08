@@ -124,7 +124,7 @@ export const mappingTerminalService = async (payload, updatedBy) => {
         await trx("sync.t_m_sync_terminal")
             .where({i_id : i_sync_id, c_project, serial_number : c_terminal_sn})
             .update({
-                b_mapping: true,
+                b_mapping: false,
             });
         await trx.commit();
 
