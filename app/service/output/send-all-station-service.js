@@ -1,8 +1,51 @@
-import db from '../../config/database.js';
+import db from "../../config/database.js";
 
-export const getAllDataStation = async () => {
-    try{
-        const result = await db
+export const getAllDataStation = async (c_project) => {
+    try {
+
+        /* ===============================
+            1️⃣ LATEST MONITORING (VALID TERMINAL ONLY)
+        =============================== */
+
+        const latestMonitoring = db("opr.t_d_monitoring_device as m1")
+            .select(
+                "m1.c_project",
+                db.raw("TRIM(m1.c_station) as c_station"),
+                "m1.n_status"
+            )
+            .join("master.t_m_terminal as t", function () {
+                this.on("t.c_terminal_sn", "=", "m1.c_terminal_sn")
+                    // 🔥 TRIM station
+                    .andOn(
+                        db.raw("TRIM(t.c_station)"),
+                        "=",
+                        db.raw("TRIM(m1.c_station)")
+                    )
+                    .andOn("t.c_project", "=", "m1.c_project")
+                    .andOn("t.b_active", "=", db.raw("true"))
+                    .andOnNull("t.d_deleted_at");
+            })
+            .whereRaw(`
+                m1.d_monitoring = (
+                    SELECT MAX(m2.d_monitoring)
+                    FROM opr.t_d_monitoring_device m2
+                    JOIN master.t_m_terminal t2
+                        ON t2.c_terminal_sn = m2.c_terminal_sn
+                        AND TRIM(t2.c_station) = TRIM(m2.c_station)
+                        AND t2.c_project = m2.c_project
+                        AND t2.b_active = true
+                        AND t2.d_deleted_at IS NULL
+                    WHERE m2.c_project = m1.c_project
+                    AND TRIM(m2.c_station) = TRIM(m1.c_station)
+                )
+            `)
+            .as("lm");
+
+        /* ===============================
+            2️⃣ MAIN QUERY
+        =============================== */
+
+        const query = db
             .select(
                 "st.c_project",
                 "p.n_project_name",
@@ -11,17 +54,17 @@ export const getAllDataStation = async () => {
                 "st.n_station",
                 "st.n_lat",
                 "st.n_lng",
+
                 db.raw(`
-                CASE
-                    WHEN COUNT(r.data) = 0 THEN 'No Data'
-                    WHEN SUM(CASE WHEN r.data->>'status' = 'NOT OK' THEN 1 ELSE 0 END) > 0 THEN 'NOT OK'
-                    WHEN SUM(CASE WHEN r.data->>'status' = 'Warning' THEN 1 ELSE 0 END) > 0 THEN 'Warning'
-                    WHEN SUM(CASE WHEN r.data->>'status' = 'OK' THEN 1 ELSE 0 END) = COUNT(r.data) THEN 'OK'
-                    ELSE 'No Data'
-                END AS status
+                    CASE
+                        WHEN lm.n_status IS NULL THEN 'No Data'
+                        WHEN LOWER(lm.n_status) = 'danger' THEN 'DANGER'
+                        WHEN LOWER(lm.n_status) = 'warning' THEN 'WARNING'
+                        WHEN LOWER(lm.n_status) = 'normal' THEN 'NORMAL'
+                        ELSE 'No Data'
+                    END AS status
                 `)
             )
-
             .from({ st: "config.t_d_station" })
 
             .leftJoin(
@@ -30,39 +73,34 @@ export const getAllDataStation = async () => {
                 "p.c_project"
             )
 
-            // 🔥 Trim comparison for c_station
-            .leftJoin({ d: "config.t_d_device" }, function () {
-                this.on(db.raw("TRIM(d.c_station)"), "=", db.raw("TRIM(st.c_station)"))
-                .andOn("d.c_project", "=", "st.c_project")
-                .andOn("d.b_active", "=", db.raw("true"));
+            .leftJoin(latestMonitoring, function () {
+                this.on("lm.c_project", "=", "st.c_project")
+                    .andOn(db.raw("lm.c_station"), "=", db.raw("TRIM(st.c_station)"));
             })
 
-            // Join monitoring
-            .leftJoin({ r: "opr.t_d_monit_raw" }, function () {
-                this.on("r.c_device", "=", "d.c_device")
-                .andOn("r.c_project", "=", "d.c_project");
-            })
+            .where("st.b_active", true);
 
-            .where("st.b_active", true)
+        if (c_project) {
+            query.andWhere("st.c_project", c_project);
+        }
 
-            .groupBy(
-                "st.c_project",
-                "p.n_project_name",
-                "p.n_project_desc",
-                db.raw("TRIM(st.c_station)"),
-                "st.n_station",
-                "st.n_lat",
-                "st.n_lng"
-            )
-
+        query
             .orderBy("st.c_project", "asc")
             .orderBy(db.raw("TRIM(st.c_station)"), "asc");
 
+        const result = await query;
 
-// console.log(result)
-        return {code: 0, message: result}
+        return {
+            code: 0,
+            message: result
+        };
+
     } catch (err) {
-        // console.log(err)
-        return {code : "2100", data : err}
+
+        return {
+            code: "2100",
+            data: err
+        };
+
     }
-}
+};

@@ -5,14 +5,30 @@ import { getAllDataStation } from "../../service/output/send-all-station-service
 
 const controller = async (req, res) => {
     try {
-        const getdata = await getAllDataStation()
-        var {code , message} = getdata
-        if(code != 0) throw getdata
 
-        return response_success_data({ res, message: "Success", status: "00", data: message });
+        const { c_project } = req.body;
+
+        const getdata = await getAllDataStation(c_project);
+
+        var { code, message } = getdata;
+        if (code != 0) throw getdata;
+
+        return response_success_data({
+            res,
+            message: "Success",
+            status: "00",
+            data: message
+        });
+
     } catch (err) {
-        const saveDataError = await saveError()
-        return response_error({ res, status: "2001", message: err.message, code: "1", data: err });
+        await saveError();
+        return response_error({
+            res,
+            status: "2001",
+            message: err.message,
+            code: "1",
+            data: err
+        });
     }
 };
 
