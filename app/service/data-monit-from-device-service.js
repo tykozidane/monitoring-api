@@ -226,7 +226,7 @@ for (const dt of dataTypes) {
         // const direction = parseInt(dt.n_measure);
         // const found = body.app?.find(a => a.direction === direction);
 
-        if (!found) continue;
+        // if (!found) continue;
 
         // const status = found.status < 0 ? "danger" : "normal";
         // const status = found.status < 0 ? "DANGER" : "NORMAL";
