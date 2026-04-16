@@ -229,8 +229,20 @@ for (const dt of dataTypes) {
         if (!found) continue;
 
         // const status = found.status < 0 ? "danger" : "normal";
-        const status = found.status < 0 ? "DANGER" : "NORMAL";
-        const measure = found.status < 0 ? "NOT RUNNING" : "RUNNING";
+        // const status = found.status < 0 ? "DANGER" : "NORMAL";
+        // const measure = found.status < 0 ? "NOT RUNNING" : "RUNNING";
+        let status = "NORMAL";
+        let measure = "RUNNING";
+
+        if (found.status < 0) {
+            measure = "NOT RUNNING";
+
+            if (direction <= 1) {
+                status = "DANGER";   // 🔥 critical
+            } else {
+                status = "WARNING";  // 🔥 non-critical
+            }
+        }
 
         monitoringData.push({
             c_data_type: dt.c_data_type,
