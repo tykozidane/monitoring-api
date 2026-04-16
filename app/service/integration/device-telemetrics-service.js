@@ -99,7 +99,7 @@ export const getDeviceTelemetrics = async (c_project, serial_number) => {
             serial_number,
             model_code: terminal.c_model_code,
             model_name: terminal.c_model_name,
-            last_updated: monitoring.d_monitoring || null,
+            last_updated: lastMonitoringTime || null,
             metrics
         }
         };
