@@ -164,6 +164,7 @@ export const saveMonitoringGateService = async (payload) => {
         ========================== */
         const dataTypes = await trx("master.t_m_data_type")
             .where({
+                c_terminal_type: terminal.c_terminal_type,
                 c_project,
                 b_active: true,
                 d_deleted_at: null
