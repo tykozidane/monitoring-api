@@ -13,6 +13,7 @@ import addTerminal from './add-terminal.js';
 import spareGate from './spare-gate.js';
 import checkMonitoringTerminal from './check-terminal-monitoring.js';
 import rollbackRealeseTerminal from './rollback-release-terminal.js';
+import detailTerminalMonitoring from './detail-terminal-monitoring.js';
 import { validateTerminal } from '../../middleware/validate-terminal.js';
 import { validateSignature } from '../../middleware/validate-signature.js';
 import { getTerminal } from '../../service/terminal/terminal-config-service.js';
@@ -33,5 +34,6 @@ router.get('/type',jwtAuthMiddleware, getTerminalType);
 router.get('/spare-gate', jwtAuthMiddleware, spareGate);
 router.post('/rollback-release-terminal', jwtAuthMiddleware, rollbackRealeseTerminal);
 router.get('/check-monitoring', checkMonitoringTerminal);
+router.post('/detail-terminal-monitoring', jwtAuthMiddleware, detailTerminalMonitoring);
 
 export default router;
