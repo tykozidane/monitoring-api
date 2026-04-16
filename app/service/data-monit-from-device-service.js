@@ -66,12 +66,45 @@ const STATUS_PRIORITY = {
     danger: 3
 };
 
+// export const resolveOverallStatus = (dataArr = [], deviceArr = []) => {
+//     let maxPriority = STATUS_PRIORITY.normal;
+
+//     const checkStatus = (status) => {
+//         if (!STATUS_PRIORITY[status]) return;
+//         maxPriority = Math.max(maxPriority, STATUS_PRIORITY[status]);
+//     };
+
+//     for (const d of dataArr) {
+//         checkStatus(d.status);
+//     }
+
+//     for (const dev of deviceArr) {
+//         // DATA_NOT_FOUND dianggap warning (opsional, bisa kamu ubah)
+//         const status = dev.status === "DATA_NOT_FOUND" ? "WARNING" : dev.status;
+//         checkStatus(status);
+//     }
+
+//     return Object.keys(STATUS_PRIORITY)
+//         .find(key => STATUS_PRIORITY[key] === maxPriority);
+// };
 export const resolveOverallStatus = (dataArr = [], deviceArr = []) => {
+
+    const STATUS_PRIORITY = {
+        normal: 1,
+        warning: 2,
+        danger: 3
+    };
+
     let maxPriority = STATUS_PRIORITY.normal;
 
+    const normalize = (status) =>
+        typeof status === "string" ? status.toLowerCase() : null;
+
     const checkStatus = (status) => {
-        if (!STATUS_PRIORITY[status]) return;
-        maxPriority = Math.max(maxPriority, STATUS_PRIORITY[status]);
+        const s = normalize(status);
+        if (!s || !STATUS_PRIORITY[s]) return;
+
+        maxPriority = Math.max(maxPriority, STATUS_PRIORITY[s]);
     };
 
     for (const d of dataArr) {
@@ -79,15 +112,18 @@ export const resolveOverallStatus = (dataArr = [], deviceArr = []) => {
     }
 
     for (const dev of deviceArr) {
-        // DATA_NOT_FOUND dianggap warning (opsional, bisa kamu ubah)
-        const status = dev.status === "DATA_NOT_FOUND" ? "WARNING" : dev.status;
+        const status =
+            normalize(dev.status) === "data_not_found"
+                ? "warning"
+                : dev.status;
+
         checkStatus(status);
     }
 
     return Object.keys(STATUS_PRIORITY)
-        .find(key => STATUS_PRIORITY[key] === maxPriority);
+        .find(key => STATUS_PRIORITY[key] === maxPriority)
+        .toUpperCase(); // 🔥 output tetap konsisten (UPPERCASE)
 };
-
 
 export const saveMonitoringGateService = async (payload) => {
     const trx = await db.transaction();
@@ -191,7 +227,8 @@ for (const dt of dataTypes) {
 
         if (!found) continue;
 
-        const status = found.status < 0 ? "danger" : "normal";
+        // const status = found.status < 0 ? "danger" : "normal";
+        const status = found.status < 0 ? "DANGER" : "NORMAL";
         const measure = found.status < 0 ? "NOT RUNNING" : "RUNNING";
 
         monitoringData.push({
