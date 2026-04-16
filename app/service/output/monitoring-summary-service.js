@@ -122,19 +122,35 @@ export const getMonitoringSummaryService = async (c_project) => {
         const list_warning = [];
 
         Object.values(stationMap).forEach(st => {
-            console.log(st)
+
             const hasDanger = st.terminal.some(t => t.status === "DANGER");
             const hasWarning = st.terminal.some(t => t.status === "WARNING");
 
             if (hasDanger) {
+
+                const filteredTerminal = st.terminal.filter(t => t.status === "DANGER");
+
                 st.status = "DANGER";
                 danger_station++;
-                list_danger.push(st);
+
+                list_danger.push({
+                    ...st,
+                    terminal: filteredTerminal
+                });
+
             }
             else if (hasWarning) {
+
+                const filteredTerminal = st.terminal.filter(t => t.status === "WARNING");
+
                 st.status = "WARNING";
                 warning_station++;
-                list_warning.push(st);
+
+                list_warning.push({
+                    ...st,
+                    terminal: filteredTerminal
+                });
+
             }
             else {
                 st.status = "GREEN";
