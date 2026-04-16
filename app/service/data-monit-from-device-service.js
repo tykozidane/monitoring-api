@@ -113,8 +113,8 @@ export const resolveOverallStatus = (dataArr = [], deviceArr = []) => {
 
     for (const dev of deviceArr) {
         const status =
-            normalize(dev.status) === "data_not_found"
-                ? "warning"
+            normalize(dev.status) === "DATA_NOT_FOUND"
+                ? "WARNING"
                 : dev.status;
 
         checkStatus(status);
@@ -320,7 +320,7 @@ for (const dt of dataTypes) {
                         c_serial_number: md.c_serial_number,
                         c_device_type: md.c_device_type,
                         c_direction: md.c_direction,
-                        status: "DATA_NOT_FOUND"
+                        status: "WARNING" // atau "DATA_NOT_FOUND" sesuai kebutuhan
                     });
                     
                     elasticData[md.c_device] = null;
@@ -333,9 +333,9 @@ for (const dt of dataTypes) {
                     c_serial_number: bodyDevice.serialnumber || md.c_serial_number || "",
                     c_device_type: md.c_device_type,
                     c_direction: bodyDevice.direction ?? md.c_direction ?? null,
-                    status: bodyDevice.status === 0 ? "normal" : "error"
+                    status: bodyDevice.status === 0 ? "NORMAL" : "DANGER"
                 });
-                elasticData[md.c_device] = bodyDevice.status === 0 ? "normal" : "error";
+                elasticData[md.c_device] = bodyDevice.status === 0 ? "NORMAL" : "DANGER";
             }
 
         /* =========================
