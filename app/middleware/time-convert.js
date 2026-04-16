@@ -5,3 +5,5 @@ function toJakartaTime(date) {
     })
     );
 }
+
+export default toJakartaTime;
