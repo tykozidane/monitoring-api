@@ -223,26 +223,47 @@ for (const dt of dataTypes) {
     ========================== */
     if (dt.c_collect_type === "application") {
         // console.log("Processing application data type:", dt.c_data_type);
-        const direction = parseInt(dt.n_measure);
-        const found = body.app?.find(a => a.direction === direction);
+        // const direction = parseInt(dt.n_measure);
+        // const found = body.app?.find(a => a.direction === direction);
 
         if (!found) continue;
 
         // const status = found.status < 0 ? "danger" : "normal";
         // const status = found.status < 0 ? "DANGER" : "NORMAL";
         // const measure = found.status < 0 ? "NOT RUNNING" : "RUNNING";
-        let status = "NORMAL";
-        let measure = "RUNNING";
+        const apps = body.app || [];
 
-        if (found.status < 0) {
-            measure = "NOT RUNNING";
+            if (!apps.length) continue;
 
-            if (direction <= 1) {
-                status = "DANGER";   // 🔥 critical
+            const direction = parseInt(dt.n_measure);
+
+            // ambil app sesuai direction
+            const found = apps.find(a => a.direction === direction);
+
+            if (!found) continue;
+
+            // 🔥 cek apakah single atau multi app
+            const isSingleApp = apps.length === 1;
+
+            // 🔥 cek apakah ada yang error
+            const hasError = apps.some(a => a.status !== 0);
+
+            let status = "NORMAL";
+            let measure = "RUNNING";
+
+            if (isSingleApp) {
+                // 🚨 SINGLE → langsung DANGER kalau error
+                if (found.status !== 0) {
+                    status = "DANGER";
+                    measure = "NOT RUNNING";
+                }
             } else {
-                status = "WARNING";  // 🔥 non-critical
+                // ⚠️ MULTI → WARNING kalau ada error
+                if (hasError) {
+                    status = "WARNING";
+                    measure = found.status !== 0 ? "NOT RUNNING" : "RUNNING";
+                }
             }
-        }
 
         monitoringData.push({
             c_data_type: dt.c_data_type,
