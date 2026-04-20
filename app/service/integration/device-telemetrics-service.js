@@ -1,4 +1,5 @@
 import db from "../../config/database.js";
+import toJakartaTime from "../../middleware/time-convert.js";
 
 export const getDeviceTelemetrics = async (c_project, serial_number) => {
     try {
@@ -68,7 +69,7 @@ export const getDeviceTelemetrics = async (c_project, serial_number) => {
             ) {
             status = "DOWN";
             }
-
+            // console.log("Network check:", now, lastMonitoringTime, "=>", status);
             return {
             value: status === "UP" ? 0 : 1,
             status,
@@ -99,10 +100,7 @@ export const getDeviceTelemetrics = async (c_project, serial_number) => {
             serial_number,
             model_code: terminal.c_model_code,
             model_name: terminal.c_model_name,
-            last_updated: new Date(
-    new Date(lastMonitoringTime).toLocaleString("en-US", {
-        timeZone: "Asia/Jakarta",
-    })) || null,
+            last_updated: toJakartaTime(lastMonitoringTime),
             metrics
         }
         };

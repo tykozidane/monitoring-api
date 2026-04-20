@@ -14,6 +14,8 @@ import spareGate from './spare-gate.js';
 import checkMonitoringTerminal from './check-terminal-monitoring.js';
 import rollbackRealeseTerminal from './rollback-release-terminal.js';
 import detailTerminalMonitoring from './detail-terminal-monitoring.js';
+import updateCoordinateTerminal from './update-coordinate-terminal.js';
+import listTerminalCoordinate from './list-terminal-coordinate.js';
 import { validateTerminal } from '../../middleware/validate-terminal.js';
 import { validateSignature } from '../../middleware/validate-signature.js';
 import { getTerminal } from '../../service/terminal/terminal-config-service.js';
@@ -35,5 +37,7 @@ router.get('/spare-gate', jwtAuthMiddleware, spareGate);
 router.post('/rollback-release-terminal', jwtAuthMiddleware, rollbackRealeseTerminal);
 router.get('/check-monitoring', checkMonitoringTerminal);
 router.post('/detail-terminal-monitoring', jwtAuthMiddleware, detailTerminalMonitoring);
+router.put('/update-coordinate-terminal', jwtAuthMiddleware, updateCoordinateTerminal);
+router.post('/list-terminal-coordinate', jwtAuthMiddleware, listTerminalCoordinate);
 
 export default router;
