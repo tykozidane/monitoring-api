@@ -66,6 +66,12 @@ export const getMonitoringSummaryService = async (c_project) => {
         /* ===============================
             3️⃣ GROUP BY STATION
         =============================== */
+        /**  GET NETWORK SETTING */
+        const settings = await db("master.t_m_setting")
+            .where("c_setting_key", "terminal_network_check_interval")
+            .where("c_project", c_project || null)
+            .where("b_active", true)
+            .first();
 
         const stationMap = {};
 
@@ -93,8 +99,16 @@ export const getMonitoringSummaryService = async (c_project) => {
             const monitoring = monitoringMap.get(mapKey);
 
             let status = "NO_DATA";
-
-            if (monitoring) {
+            const interval = settings ? parseInt(settings.c_setting_value) : 5;
+            const now = new Date();
+            if(monitoring && monitoring.d_monitoring) {
+                const diffMinutes = (now - new Date(monitoring.d_monitoring)) / 1000 / 60;  
+                if(diffMinutes > interval) {
+                    status = "DANGER";
+                } else {
+                    status = monitoring.n_status?.toUpperCase() || "NO_DATA";
+                }
+            } else {
                 status = monitoring.n_status?.toUpperCase() || "NO_DATA";
             }
 

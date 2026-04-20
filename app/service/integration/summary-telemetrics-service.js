@@ -25,6 +25,7 @@ export const getSummaryTelemetricsService = async (c_project) => {
             })
             .leftJoin("config.t_d_project as p", "p.c_project", "t.c_project")
             .where("t.b_active", true)
+            .whereNotNull("t.c_terminal_sn")
             .whereNull("t.d_deleted_at");
 
         if (c_project) {
