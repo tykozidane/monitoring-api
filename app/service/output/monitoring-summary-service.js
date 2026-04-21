@@ -126,10 +126,10 @@ export const getMonitoringSummaryService = async (c_project) => {
                             c_data_type: dataM.c_data_type,
                             notes: dataM.notes || null
                         });
-                        if(status === "DANGER" && dataM.status === "WARNING") {
+                        if(status !== "DANGER" && dataM.status === "WARNING") {
                             status = dataM.status; 
                         } else {
-                            status = dataM.status;
+                            status = "DANGER";
                         }
                         
                     }
