@@ -78,7 +78,7 @@ export const getMonitoringSummaryService = async (c_project) => {
         // console.log("Network check interval setting:", settings ? settings.c_setting_value : "Not found");
 
         /**  GET DATA TYPE */
-        const dataTypes = await db("config.t_m_terminal_metrics")
+        const dataTypes = await db("master.t_m_data_type")
             .where("b_active", true)
             .select("c_project", "c_terminal_type", "c_data_type");
 
@@ -112,7 +112,7 @@ export const getMonitoringSummaryService = async (c_project) => {
             const interval = settings ? parseInt(settings.c_setting_value) : 5;
             const now = new Date();
             if(monitoring && monitoring.d_monitoring) {
-            console.log(`Processing terminal ${row.c_terminal_sn} at station ${row.n_station}`);
+            // console.log(`Processing terminal ${row.c_terminal_sn} at station ${row.n_station}`);
                 const diffMinutes = (now - new Date(monitoring.d_monitoring)) / 1000 / 60;  
                 if(diffMinutes > interval) {
                     status = "DANGER";
@@ -137,9 +137,6 @@ export const getMonitoringSummaryService = async (c_project) => {
                                 c_data_type: dataM.c_data_type,
                                 notes: dataM.notes || null
                             });
-                            if(row.c_terminal_sn === "097-197" || row.c_terminal_sn === "568-077") {
-                                console.log("Data type:", dataM.c_data_type, "Status:", dataM.status, "Measure:", dataM.measure);
-                            }
                             if(status === "DANGER") {
                                 status = "DANGER"; 
                             } else if(status === "WARNING" && dataM.status === "DANGER") {
