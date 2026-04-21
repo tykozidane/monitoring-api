@@ -81,7 +81,7 @@ export const getMonitoringSummaryService = async (c_project) => {
         const dataTypes = await db("master.t_m_data_type")
             .where("b_active", true)
             .select("c_project", "c_terminal_type", "c_data_type");
-
+        console.log("DataTyoes:", dataTypes);
         const stationMap = {};
 
         for (const row of rows) {
@@ -123,7 +123,9 @@ export const getMonitoringSummaryService = async (c_project) => {
                         notes: "No monitoring data within interval"
                     })
                 } 
-                
+if(row.c_terminal_sn === "097-197" || row.c_terminal_sn === "568-077"){
+    console.log(`Terminal `, row);
+}
                 const dataTypesForTerminal = dataTypes.filter(dt => dt.c_project === row.c_project && dt.c_terminal_type === row.c_terminal_type);
                 for (const dataTypeMap of dataTypesForTerminal || []) {
                     const dataM = monitoring.data ? monitoring.data.find(d => d.c_data_type === dataTypeMap.c_data_type) : null;
