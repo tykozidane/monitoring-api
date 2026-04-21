@@ -6,7 +6,7 @@ export const getMonitoringSummaryService = async (c_project) => {
         /* ===============================
             1️⃣ GET LATEST MONITORING PER TERMINAL
         =============================== */
-        console.log("1 Fetching latest monitoring data...");
+        // console.log("1 Fetching latest monitoring data...");
         const latestMonitoring = await db.raw(`
             SELECT DISTINCT ON (c_terminal_sn, c_project)
                 c_terminal_sn,
@@ -28,7 +28,7 @@ export const getMonitoringSummaryService = async (c_project) => {
         /* ===============================
             2️⃣ GET TERMINAL + STATION
         =============================== */
-        console.log("2 Fetching terminal and station data...");
+        // console.log("2 Fetching terminal and station data...");
         let query = db
             .select(
                 "st.c_project",
@@ -66,14 +66,14 @@ export const getMonitoringSummaryService = async (c_project) => {
         /* ===============================
             3️⃣ GROUP BY STATION
         =============================== */
-        console.log("3 Grouping data by station...");
+        // console.log("3 Grouping data by station...");
         /**  GET NETWORK SETTING */
         const settings = await db("master.t_m_setting")
             .where("c_setting_key", "terminal_network_check_interval")
             .where("c_project", c_project || null)
             .where("b_active", true)
             .first();
-        console.log("Network check interval setting:", settings ? settings.c_setting_value : "Not found");
+        // console.log("Network check interval setting:", settings ? settings.c_setting_value : "Not found");
         const stationMap = {};
 
         for (const row of rows) {
@@ -107,7 +107,7 @@ export const getMonitoringSummaryService = async (c_project) => {
                 if(diffMinutes > interval) {
                     status = "DANGER";
                 } else {
-                    console.log(`Terminal ${row.c_terminal_sn} last monitoring ${diffMinutes.toFixed(2)} minutes ago, within interval. ${monitoring.n_status ? monitoring.n_status.toUpperCase() : "NO_DATA"} `);
+                    // console.log(`Terminal ${row.c_terminal_sn} last monitoring ${diffMinutes.toFixed(2)} minutes ago, within interval. ${monitoring.n_status ? monitoring.n_status.toUpperCase() : "NO_DATA"} `);
                     status = monitoring.n_status ? monitoring.n_status.toUpperCase() : "NO_DATA";
                 }
             } 
@@ -127,7 +127,7 @@ export const getMonitoringSummaryService = async (c_project) => {
         /* ===============================
             4️⃣ CLASSIFY STATION
         =============================== */
-        console.log("4 Classifying stations...");
+        // console.log("4 Classifying stations...");
         let green_station = 0;
         let warning_station = 0;
         let danger_station = 0;
