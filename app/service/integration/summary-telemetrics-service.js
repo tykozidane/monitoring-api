@@ -14,8 +14,6 @@ export const getSummaryTelemetricsService = async (c_project) => {
                 "t.c_station",
                 "t.n_terminal_name",
                 "st.n_station",
-                "st.n_lat",
-                "st.n_lng",
                 "p.n_project_name",
                 "p.n_project_desc"
             )
@@ -88,8 +86,6 @@ export const getSummaryTelemetricsService = async (c_project) => {
                     n_project_desc: t.n_project_desc,
                     c_station: t.c_station,
                     n_station: t.n_station,
-                    n_lat: t.n_lat,
-                    n_lng: t.n_lng,
                     terminal: []
                 };
             }
@@ -136,6 +132,7 @@ export const getSummaryTelemetricsService = async (c_project) => {
             stationMap[stationKey].terminal.push({
                 c_terminal_sn: t.c_terminal_sn,
                 n_terminal_name: t.n_terminal_name,
+                d_monitoring: lastTime,
                 status: terminalStatus
             });
         }
