@@ -75,6 +75,12 @@ export const getMonitoringSummaryService = async (c_project) => {
             .where("b_active", true)
             .first();
         // console.log("Network check interval setting:", settings ? settings.c_setting_value : "Not found");
+
+        /**  GET DATA TYPE */
+        const dataTypes = await db("config.t_m_terminal_metrics")
+            .where("b_active", true)
+            .select("c_project", "c_terminal_type", "c_data_type");
+
         const stationMap = {};
 
         for (const row of rows) {
@@ -118,7 +124,10 @@ export const getMonitoringSummaryService = async (c_project) => {
                     // console.log(`Terminal ${row.c_terminal_sn} last monitoring ${diffMinutes.toFixed(2)} minutes ago, within interval. ${monitoring.n_status ? monitoring.n_status.toUpperCase() : "NO_DATA"} `);
                     status = monitoring.n_status ? monitoring.n_status.toUpperCase() : "NO_DATA";
                 }
-                for (const dataM of monitoring.data || []) {
+                const dataTypesForTerminal = dataTypes.filter(dt => dt.c_project === row.c_project && dt.c_terminal_type === row.c_terminal_type);
+                for (const dataTypeMap of dataTypesForTerminal || []) {
+                    const dataM = monitoring.data ? monitoring.data.find(d => d.c_data_type === dataTypeMap.c_data_type) : null;
+                    if(dataM) {
                     if(dataM.status === "DANGER" || dataM.status === "WARNING") {
                         matricsSend.push({
                             status : dataM.status,
@@ -132,6 +141,7 @@ export const getMonitoringSummaryService = async (c_project) => {
                             status = "DANGER";
                         }
                         
+                    }
                     }
                 }
             } 
