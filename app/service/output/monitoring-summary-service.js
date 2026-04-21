@@ -142,7 +142,8 @@ export const getMonitoringSummaryService = async (c_project) => {
                 n_lat: row.t_lat,
                 n_lng: row.t_lng,
                 d_monitoring: monitoring?.d_monitoring || null,
-                status
+                status,
+                matrics : matricsSend
             };
 
             stationMap[key].terminal.push(terminalData);
