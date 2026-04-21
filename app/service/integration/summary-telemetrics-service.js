@@ -109,13 +109,14 @@ export const getSummaryTelemetricsService = async (c_project) => {
 
                     const isDown = !lastTime || (now - lastTime > interval * 60000);
 
-                    if (isDown) hasDanger = true;
+                    if (isDown) {hasDanger = true;
                     matricsSend.push({
                         status : "DOWN",
                         measure: "DOWN",
                         c_data_type: metric.c_data_type,
                         notes: "No monitoring data within interval"
                         });
+                    }
                     continue;
                 }
 
@@ -152,7 +153,7 @@ export const getSummaryTelemetricsService = async (c_project) => {
             stationMap[stationKey].terminal.push({
                 c_terminal_sn: t.c_terminal_sn,
                 n_terminal_name: t.n_terminal_name,
-                d_monitoring: lastTime,
+                d_monitoring: toJakartaTime(lastTime) || null,
                 status: terminalStatus,
                 matrics: matricsSend
             });
