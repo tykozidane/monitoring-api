@@ -107,11 +107,10 @@ export const getMonitoringSummaryService = async (c_project) => {
                 if(diffMinutes > interval) {
                     status = "DANGER";
                 } else {
+                    console.log(`Terminal ${row.c_terminal_sn} last monitoring ${diffMinutes.toFixed(2)} minutes ago, within interval. ${monitoring.n_status ? monitoring.n_status.toUpperCase() : "NO_DATA"} `);
                     status = monitoring.n_status ? monitoring.n_status.toUpperCase() : "NO_DATA";
                 }
-            } else {
-                status = monitoring.n_status ? monitoring.n_status.toUpperCase() : "NO_DATA";
-            }
+            } 
 
             const terminalData = {
                 n_terminal_name: row.n_terminal_name,
