@@ -103,7 +103,7 @@ export const getMonitoringSummaryService = async (c_project) => {
             }
 
             if (!row.c_terminal_sn) continue;
-
+            console.log(`Processing terminal ${row.c_terminal_sn} at station ${row.n_station}`);
             const mapKey = `${row.c_project}_${row.c_terminal_sn}`;
             const monitoring = monitoringMap.get(mapKey);
             let matricsSend = [];
@@ -136,7 +136,7 @@ export const getMonitoringSummaryService = async (c_project) => {
                                 c_data_type: dataM.c_data_type,
                                 notes: dataM.notes || null
                             });
-                            if(row.c_terminal_sn === "097-197") {
+                            if(row.c_terminal_sn === "097-197" || row.c_terminal_sn === "568-077") {
                                 console.log("Data type:", dataM.c_data_type, "Status:", dataM.status, "Measure:", dataM.measure);
                             }
                             if(status === "DANGER") {
