@@ -103,7 +103,7 @@ export const getMonitoringSummaryService = async (c_project) => {
             }
 
             if (!row.c_terminal_sn) continue;
-            console.log(`Processing terminal ${row.c_terminal_sn} at station ${row.n_station}`);
+
             const mapKey = `${row.c_project}_${row.c_terminal_sn}`;
             const monitoring = monitoringMap.get(mapKey);
             let matricsSend = [];
@@ -112,6 +112,7 @@ export const getMonitoringSummaryService = async (c_project) => {
             const interval = settings ? parseInt(settings.c_setting_value) : 5;
             const now = new Date();
             if(monitoring && monitoring.d_monitoring) {
+            console.log(`Processing terminal ${row.c_terminal_sn} at station ${row.n_station}`);
                 const diffMinutes = (now - new Date(monitoring.d_monitoring)) / 1000 / 60;  
                 if(diffMinutes > interval) {
                     status = "DANGER";
