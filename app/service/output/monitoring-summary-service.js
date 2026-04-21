@@ -1,4 +1,5 @@
 import db from "../../config/database.js";
+import toJakartaTime from "../../middleware/time-convert.js";
 
 export const getMonitoringSummaryService = async (c_project) => {
     try {
@@ -128,20 +129,25 @@ export const getMonitoringSummaryService = async (c_project) => {
                 for (const dataTypeMap of dataTypesForTerminal || []) {
                     const dataM = monitoring.data ? monitoring.data.find(d => d.c_data_type === dataTypeMap.c_data_type) : null;
                     if(dataM) {
-                    if(dataM.status === "DANGER" || dataM.status === "WARNING") {
-                        matricsSend.push({
-                            status : dataM.status,
-                            measure: dataM.measure,
-                            c_data_type: dataM.c_data_type,
-                            notes: dataM.notes || null
-                        });
-                        if(status !== "DANGER" && dataM.status === "WARNING") {
-                            status = dataM.status; 
-                        } else {
-                            status = "DANGER";
+                        if(dataM.status === "DANGER" || dataM.status === "WARNING") {
+                            matricsSend.push({
+                                status : dataM.status,
+                                measure: dataM.measure,
+                                c_data_type: dataM.c_data_type,
+                                notes: dataM.notes || null
+                            });
+                            if(row.c_terminal_sn === "097-197") {
+                                console.log("Data type:", dataM.c_data_type, "Status:", dataM.status, "Measure:", dataM.measure);
+                            }
+                            if(status === "DANGER") {
+                                status = "DANGER"; 
+                            } else if(status === "WARNING" && dataM.status === "DANGER") {
+                                status = "DANGER";
+                            } else {
+                                status = dataM.status;
+                            }
+                            
                         }
-                        
-                    }
                     }
                 }
             } 
@@ -151,7 +157,7 @@ export const getMonitoringSummaryService = async (c_project) => {
                 c_terminal_sn: row.c_terminal_sn,
                 n_lat: row.t_lat,
                 n_lng: row.t_lng,
-                d_monitoring: monitoring?.d_monitoring || null,
+                d_monitoring: toJakartaTime(monitoring?.d_monitoring) || null,
                 status,
                 matrics : matricsSend
             };
