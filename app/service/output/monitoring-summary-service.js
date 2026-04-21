@@ -107,10 +107,10 @@ export const getMonitoringSummaryService = async (c_project) => {
                 if(diffMinutes > interval) {
                     status = "DANGER";
                 } else {
-                    status = monitoring.n_status?.toUpperCase() || "NO_DATA";
+                    status = monitoring.n_status ? monitoring.n_status.toUpperCase() : "NO_DATA";
                 }
             } else {
-                status = monitoring.n_status?.toUpperCase() || "NO_DATA";
+                status = monitoring.n_status ? monitoring.n_status.toUpperCase() : "NO_DATA";
             }
 
             const terminalData = {
