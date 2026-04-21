@@ -122,10 +122,8 @@ export const getMonitoringSummaryService = async (c_project) => {
                         c_data_type: "NETWORK_USAGE",
                         notes: "No monitoring data within interval"
                     })
-                } else {
-                    // console.log(`Terminal ${row.c_terminal_sn} last monitoring ${diffMinutes.toFixed(2)} minutes ago, within interval. ${monitoring.n_status ? monitoring.n_status.toUpperCase() : "NO_DATA"} `);
-                    status = monitoring.n_status ? monitoring.n_status.toUpperCase() : "NO_DATA";
-                }
+                } 
+                
                 const dataTypesForTerminal = dataTypes.filter(dt => dt.c_project === row.c_project && dt.c_terminal_type === row.c_terminal_type);
                 for (const dataTypeMap of dataTypesForTerminal || []) {
                     const dataM = monitoring.data ? monitoring.data.find(d => d.c_data_type === dataTypeMap.c_data_type) : null;
@@ -137,6 +135,9 @@ export const getMonitoringSummaryService = async (c_project) => {
                                 c_data_type: dataM.c_data_type,
                                 notes: dataM.notes || null
                             });
+                            if(row.c_terminal_sn === "097-197" || row.c_terminal_sn === "568-077") {
+                                console.log("Data type:", dataM.c_data_type, "Status:", dataM.status, "Measure:", dataM.measure);
+                            }
                             if(status === "DANGER") {
                                 status = "DANGER"; 
                             } else if(status === "WARNING" && dataM.status === "DANGER") {
