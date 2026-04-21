@@ -1,6 +1,8 @@
 import db from "../../config/database.js";
 import toJakartaTime from "../../middleware/time-convert.js";
 
+const normalize = (s) => (s ? s.toUpperCase() : "NO_DATA");
+
 export const getMonitoringSummaryService = async (c_project) => {
     try {
 
@@ -82,6 +84,18 @@ export const getMonitoringSummaryService = async (c_project) => {
             .where("b_active", true)
             .select("c_project", "c_terminal_type", "c_data_type");
         // console.log("DataTyoes:", dataTypes);
+
+        /** GET ALL METRICS CONFIG */
+        const metricsConfig = await db("config.t_m_terminal_metrics")
+            .where("b_active", true);
+         /** GROUP CONFIG PER TYPE */
+        const metricsMap = {};
+        metricsConfig.forEach(m => {
+            const key = `${m.c_project}_${m.c_terminal_type}`;
+            if (!metricsMap[key]) metricsMap[key] = [];
+            metricsMap[key].push(m);
+        });
+
         const stationMap = {};
 
         for (const row of rows) {
@@ -106,6 +120,8 @@ export const getMonitoringSummaryService = async (c_project) => {
 
             const mapKey = `${row.c_project}_${row.c_terminal_sn}`;
             const monitoring = monitoringMap.get(mapKey);
+            const configKey = `${row.c_project}_${row.c_terminal_type}`;
+            const configs = metricsMap[configKey] || [];
             let matricsSend = [];
 
             let status = "NO_DATA";
@@ -143,6 +159,30 @@ export const getMonitoringSummaryService = async (c_project) => {
                             }
                             
                         }
+                    }
+                }
+                for (const metric of configs) {
+                    const found = monitoringData.find(
+                        m => m.c_data_type === metric.c_data_from
+                    );
+                    const statusM = normalize(found?.status);
+
+                    if (statusM === "DANGER") {
+                        status = "DANGER";
+                        matricsSend.push({
+                            status : found?.status || "DANGER",
+                            measure: found?.measure || "DANGER",
+                            c_data_type: metric.c_data_type,
+                            notes: found?.notes || null
+                        });
+                    } else if (statusM === "WARNING") {
+                        if(status !== "DANGER") status = "WARNING";
+                        matricsSend.push({
+                            status : found?.status || "WARNING",
+                            measure: found?.measure || "WARNING",
+                            c_data_type: metric.c_data_type,
+                            notes: found?.notes || null
+                        });
                     }
                 }
             } 
