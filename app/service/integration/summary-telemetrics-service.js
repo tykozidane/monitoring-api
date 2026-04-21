@@ -99,7 +99,7 @@ export const getSummaryTelemetricsService = async (c_project) => {
             const lastTime = monitoring?.d_monitoring ? new Date(monitoring.d_monitoring) : null;
 
             const interval = settingMap[t.c_project] || 5;
-
+            let matricsSend = [];
             let hasDanger = false;
             let hasWarning = false;
 
@@ -110,7 +110,11 @@ export const getSummaryTelemetricsService = async (c_project) => {
                     const isDown = !lastTime || (now - lastTime > interval * 60000);
 
                     if (isDown) hasDanger = true;
-
+                    matricsSend.push({
+                        status : "DOWN",
+                        measure: "DOWN",
+                        c_data_type: metric.c_data_type
+                        });
                     continue;
                 }
 
@@ -120,8 +124,21 @@ export const getSummaryTelemetricsService = async (c_project) => {
 
                 const status = normalize(found?.status);
 
-                if (status === "DANGER") hasDanger = true;
-                else if (status === "WARNING") hasWarning = true;
+                if (status === "DANGER") {
+                    hasDanger = true;
+                    matricsSend.push({
+                        status : found?.status || "DANGER",
+                        measure: found?.measure || "DANGER",
+                        c_data_type: metric.c_data_type
+                    });
+                } else if (status === "WARNING") {
+                    hasWarning = true;
+                    matricsSend.push({
+                        status : found?.status || "WARNING",
+                        measure: found?.measure || "WARNING",
+                        c_data_type: metric.c_data_type
+                    });
+                }
             }
 
             let terminalStatus = "NORMAL";
@@ -133,7 +150,8 @@ export const getSummaryTelemetricsService = async (c_project) => {
                 c_terminal_sn: t.c_terminal_sn,
                 n_terminal_name: t.n_terminal_name,
                 d_monitoring: lastTime,
-                status: terminalStatus
+                status: terminalStatus,
+                matrics: matricsSend
             });
         }
 
