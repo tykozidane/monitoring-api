@@ -190,7 +190,7 @@ export const getMonitoringSummaryService = async (c_project) => {
         };
 
     } catch (err) {
-
+        console.error("Error in getMonitoringSummaryService:", err);
         return {
             code: "5000",
             message: "Failed to get monitoring summary",
