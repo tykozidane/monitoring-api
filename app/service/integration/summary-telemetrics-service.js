@@ -113,7 +113,8 @@ export const getSummaryTelemetricsService = async (c_project) => {
                     matricsSend.push({
                         status : "DOWN",
                         measure: "DOWN",
-                        c_data_type: metric.c_data_type
+                        c_data_type: metric.c_data_type,
+                        notes: "No monitoring data within interval"
                         });
                     continue;
                 }
@@ -129,14 +130,16 @@ export const getSummaryTelemetricsService = async (c_project) => {
                     matricsSend.push({
                         status : found?.status || "DANGER",
                         measure: found?.measure || "DANGER",
-                        c_data_type: metric.c_data_type
+                        c_data_type: metric.c_data_type,
+                        notes: found?.notes || null
                     });
                 } else if (status === "WARNING") {
                     hasWarning = true;
                     matricsSend.push({
                         status : found?.status || "WARNING",
                         measure: found?.measure || "WARNING",
-                        c_data_type: metric.c_data_type
+                        c_data_type: metric.c_data_type,
+                        notes: found?.notes || null
                     });
                 }
             }

@@ -13,6 +13,7 @@ export const getMonitoringSummaryService = async (c_project) => {
                 c_project,
                 TRIM(c_station) as c_station,
                 d_monitoring,
+                data,
                 n_status
             FROM opr.t_d_monitoring_device
             ORDER BY c_terminal_sn, c_project, d_monitoring DESC
@@ -98,6 +99,7 @@ export const getMonitoringSummaryService = async (c_project) => {
 
             const mapKey = `${row.c_project}_${row.c_terminal_sn}`;
             const monitoring = monitoringMap.get(mapKey);
+            let matricsSend = [];
 
             let status = "NO_DATA";
             const interval = settings ? parseInt(settings.c_setting_value) : 5;
@@ -106,9 +108,31 @@ export const getMonitoringSummaryService = async (c_project) => {
                 const diffMinutes = (now - new Date(monitoring.d_monitoring)) / 1000 / 60;  
                 if(diffMinutes > interval) {
                     status = "DANGER";
+                    matricsSend.push({
+                        status : "DOWN",
+                        measure: "DOWN",
+                        c_data_type: "NETWORK_USAGE",
+                        notes: "No monitoring data within interval"
+                    })
                 } else {
                     // console.log(`Terminal ${row.c_terminal_sn} last monitoring ${diffMinutes.toFixed(2)} minutes ago, within interval. ${monitoring.n_status ? monitoring.n_status.toUpperCase() : "NO_DATA"} `);
                     status = monitoring.n_status ? monitoring.n_status.toUpperCase() : "NO_DATA";
+                }
+                for (const dataM of monitoring.data || []) {
+                    if(dataM.status === "DANGER" || dataM.status === "WARNING") {
+                        matricsSend.push({
+                            status : dataM.status,
+                            measure: dataM.measure,
+                            c_data_type: dataM.c_data_type,
+                            notes: dataM.notes || null
+                        });
+                        if(status === "DANGER" && dataM.status === "WARNING") {
+                            status = dataM.status; 
+                        } else {
+                            status = dataM.status;
+                        }
+                        
+                    }
                 }
             } 
 
