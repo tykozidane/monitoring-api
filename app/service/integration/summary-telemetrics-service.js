@@ -108,9 +108,10 @@ export const getSummaryTelemetricsService = async (c_project) => {
                 if (metric.c_metrics_type === "network") {
 
                     const isDown = !lastTime || (now - lastTime > interval * 60000);
-
-                    if (isDown) {hasDanger = true;
-                    matricsSend.push({
+                    console.log(`Checking network for terminal ${t.c_terminal_sn} - Last monitoring: ${lastTime}, Now: ${now}, Interval: ${interval} mins, IsDown: ${isDown}`);
+                    if (isDown) {
+                        hasDanger = true;
+                        matricsSend.push({
                         status : "DOWN",
                         measure: "DOWN",
                         c_data_type: metric.c_data_type,
