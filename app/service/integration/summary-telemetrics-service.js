@@ -107,8 +107,8 @@ export const getSummaryTelemetricsService = async (c_project) => {
             for (const metric of configs) {
 
                 if (metric.c_metrics_type === "network") {
-
-                    const isDown = !lastTime || (now - lastTime > interval * 60000);
+                    if(!lastTime) continue; // jika belum pernah monitoring, skip cek network
+                    const isDown =  (now - lastTime > interval * 60000);
                     console.log(`Checking network for terminal ${t.c_terminal_sn} IsDown: ${isDown}`);
                     if (isDown) {
                         hasDanger = true;

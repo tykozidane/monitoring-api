@@ -87,27 +87,25 @@ export const getMonitoringSummaryService = async (c_project) => {
         // extract jadi array
         const dataTypeList = dataTypes.map(d => d.c_data_type);
 
-        /** GET ALL METRICS CONFIG */
-        const metricsConfig = await db("config.t_m_terminal_metrics as m")
-            .where("m.b_active", true)
-            .whereNotIn(
-                db.raw("(m.c_data_type, m.c_terminal_type)"),
-                function () {
-                    this.select(
-                        "c_data_type",
-                        "c_terminal_type"
-                    )
-                    .from("master.t_m_data_type")
-                    .where("b_active", true);
-                }
-            );
-         /** GROUP CONFIG PER TYPE */
-        const metricsMap = {};
-        metricsConfig.forEach(m => {
-            const key = `${m.c_project}_${m.c_terminal_type}`;
-            if (!metricsMap[key]) metricsMap[key] = [];
-            metricsMap[key].push(m);
-        });
+        //Jika akan mengecek Metrics aktifkan ini
+        // /** GET ALL METRICS CONFIG */
+        // const metricsConfig = await db("config.t_m_terminal_metrics as m")
+        // .leftJoin("master.t_m_data_type as d", function () {
+        //     this.on("m.c_data_from", "=", "d.c_data_type")
+        //         .andOn("m.c_terminal_type", "=", "d.c_terminal_type")
+        //         .andOn("d.b_active", "=", db.raw("true"));
+        // })
+        // .where("m.b_active", true)
+        // .whereNull("d.c_data_type");
+        // const checkMetrics = metricsConfig.map(m => m.c_data_from);
+        //     console.log("Metrics Config:", checkMetrics);
+        //  /** GROUP CONFIG PER TYPE */
+        // const metricsMap = {};
+        // metricsConfig.forEach(m => {
+        //     const key = `${m.c_project}_${m.c_terminal_type}`;
+        //     if (!metricsMap[key]) metricsMap[key] = [];
+        //     metricsMap[key].push(m);
+        // });
 
         const stationMap = {};
 
@@ -133,8 +131,9 @@ export const getMonitoringSummaryService = async (c_project) => {
 
             const mapKey = `${row.c_project}_${row.c_terminal_sn}`;
             const monitoring = monitoringMap.get(mapKey);
-            const configKey = `${row.c_project}_${row.c_terminal_type}`;
-            const configs = metricsMap[configKey] || [];
+            //Jika akan mengecek Metrics aktifkan ini
+            // const configKey = `${row.c_project}_${row.c_terminal_type}`;
+            // const configs = metricsMap[configKey] || [];
             let matricsSend = [];
 
             let status = "NO_DATA";
@@ -174,30 +173,34 @@ export const getMonitoringSummaryService = async (c_project) => {
                         }
                     }
                 }
-                for (const metric of configs) {
-                    const found = monitoringData.find(
-                        m => m.c_data_type === metric.c_data_from
-                    );
-                    const statusM = normalize(found?.status);
+                //Jika akan mengecek Metrics aktifkan ini
+                // for (const metric of configs) {
+                //     if (metric.c_metrics_type === "network") {
+                //         continue;
+                //     }
+                //     const found = monitoringData.find(
+                //         m => m.c_data_type === metric.c_data_from
+                //     );
+                //     const statusM = normalize(found?.status);
 
-                    if (statusM === "DANGER") {
-                        status = "DANGER";
-                        matricsSend.push({
-                            status : found?.status || "DANGER",
-                            measure: found?.measure || "DANGER",
-                            c_data_type: metric.c_data_type,
-                            notes: found?.notes || null
-                        });
-                    } else if (statusM === "WARNING") {
-                        if(status !== "DANGER") status = "WARNING";
-                        matricsSend.push({
-                            status : found?.status || "WARNING",
-                            measure: found?.measure || "WARNING",
-                            c_data_type: metric.c_data_type,
-                            notes: found?.notes || null
-                        });
-                    }
-                }
+                //     if (statusM === "DANGER") {
+                //         status = "DANGER";
+                //         matricsSend.push({
+                //             status : found?.status || "DANGER",
+                //             measure: found?.measure || "DANGER",
+                //             c_data_type: metric.c_data_type,
+                //             notes: found?.notes || null
+                //         });
+                //     } else if (statusM === "WARNING") {
+                //         if(status !== "DANGER") status = "WARNING";
+                //         matricsSend.push({
+                //             status : found?.status || "WARNING",
+                //             measure: found?.measure || "WARNING",
+                //             c_data_type: metric.c_data_type,
+                //             notes: found?.notes || null
+                //         });
+                //     }
+                // }
             } 
 
             const terminalData = {
