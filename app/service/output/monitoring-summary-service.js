@@ -84,10 +84,23 @@ export const getMonitoringSummaryService = async (c_project) => {
             .where("b_active", true)
             .select("c_project", "c_terminal_type", "c_data_type");
         // console.log("DataTyoes:", dataTypes);
+        // extract jadi array
+        const dataTypeList = dataTypes.map(d => d.c_data_type);
 
         /** GET ALL METRICS CONFIG */
-        const metricsConfig = await db("config.t_m_terminal_metrics")
-            .where("b_active", true);
+        const metricsConfig = await db("config.t_m_terminal_metrics as m")
+            .where("m.b_active", true)
+            .whereNotIn(
+                db.raw("(m.c_data_type, m.c_terminal_type)"),
+                function () {
+                    this.select(
+                        "c_data_type",
+                        "c_terminal_type"
+                    )
+                    .from("master.t_m_data_type")
+                    .where("b_active", true);
+                }
+            );
          /** GROUP CONFIG PER TYPE */
         const metricsMap = {};
         metricsConfig.forEach(m => {
