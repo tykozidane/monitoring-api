@@ -132,7 +132,7 @@ export const getMonitoringSummaryService = async (c_project) => {
 
             if (!row.c_terminal_sn) continue;
             if(row.c_terminal_sn === "611-077"){
-                console.log("Debug Terminal 611-077:", row.n_status);
+                console.log("Debug Terminal 611-077:", monitoring.n_station);
             }
             const mapKey = `${row.c_project}_${row.c_terminal_sn}`;
             const monitoring = monitoringMap.get(mapKey);
@@ -144,6 +144,7 @@ export const getMonitoringSummaryService = async (c_project) => {
             let status = monitoring && monitoring.n_status ? normalize(monitoring.n_status) : "NO_DATA";
             const interval = settings ? parseInt(settings.c_setting_value) : 5;
             const now = new Date();
+            console.log("check Terminal ", status, " d_monitoring " , monitoring.d_monitoring)
             if(monitoring && monitoring.d_monitoring) {
             // console.log(`Processing terminal ${row.c_terminal_sn} at station ${row.n_station}`);
                 const diffMinutes = (now - new Date(monitoring.d_monitoring)) / 1000 / 60;  
