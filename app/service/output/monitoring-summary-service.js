@@ -128,7 +128,9 @@ export const getMonitoringSummaryService = async (c_project) => {
             }
 
             if (!row.c_terminal_sn) continue;
-
+            if(row.c_terminal_sn === "611-077"){
+                console.log("Debug Terminal 611-077:", row.n_status, monitoringMap.get(`${row.c_project}_${row.c_terminal_sn}`));
+            }
             const mapKey = `${row.c_project}_${row.c_terminal_sn}`;
             const monitoring = monitoringMap.get(mapKey);
             //Jika akan mengecek Metrics aktifkan ini
