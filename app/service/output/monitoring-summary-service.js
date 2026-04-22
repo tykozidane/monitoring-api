@@ -160,6 +160,9 @@ export const getMonitoringSummaryService = async (c_project) => {
                     })
                 } 
                 const dataTypesForTerminal = dataTypes.filter(dt => dt.c_project === row.c_project && dt.c_terminal_type === row.c_terminal_type);
+                if(row.c_terminal_sn === "611-077"){
+                            console.log(`Data for terminal 611-077, data type `, dataTypesForTerminal);
+                        }
                 for (const dataTypeMap of dataTypesForTerminal || []) {
                     const dataM = monitoring.data ? monitoring.data.find(d => d.c_data_type === dataTypeMap.c_data_type) : null;
                     if(dataM) {
