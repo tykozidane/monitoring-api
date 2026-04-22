@@ -129,7 +129,7 @@ export const getMonitoringSummaryService = async (c_project) => {
 
             if (!row.c_terminal_sn) continue;
             if(row.c_terminal_sn === "611-077"){
-                console.log("Debug Terminal 611-077:", row.n_status, monitoringMap.get(`${row.c_project}_${row.c_terminal_sn}`));
+                console.log("Debug Terminal 611-077:", row.n_status);
             }
             const mapKey = `${row.c_project}_${row.c_terminal_sn}`;
             const monitoring = monitoringMap.get(mapKey);
@@ -138,7 +138,7 @@ export const getMonitoringSummaryService = async (c_project) => {
             // const configs = metricsMap[configKey] || [];
             let matricsSend = [];
 
-            let status = row.n_status ? normalize(row.n_status) : "NO_DATA";
+            let status = monitoring && monitoring.n_status ? normalize(monitoring.n_status) : "NO_DATA";
             const interval = settings ? parseInt(settings.c_setting_value) : 5;
             const now = new Date();
             if(monitoring && monitoring.d_monitoring) {
@@ -157,6 +157,9 @@ export const getMonitoringSummaryService = async (c_project) => {
                 for (const dataTypeMap of dataTypesForTerminal || []) {
                     const dataM = monitoring.data ? monitoring.data.find(d => d.c_data_type === dataTypeMap.c_data_type) : null;
                     if(dataM) {
+                        if(row.c_terminal_sn === "611-077"){
+                            console.log(`Data for terminal 611-077, data type ${dataTypeMap.c_data_type}:`, dataM);
+                        }
                         if(dataM.status === "DANGER" || dataM.status === "WARNING") {
                             matricsSend.push({
                                 status : dataM.status,
