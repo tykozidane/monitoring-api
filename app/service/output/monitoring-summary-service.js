@@ -27,6 +27,9 @@ export const getMonitoringSummaryService = async (c_project) => {
         latestMonitoring.rows.forEach(m => {
             const key = `${m.c_project}_${m.c_terminal_sn}`;
             monitoringMap.set(key, m);
+            if(m.c_terminal_sn === "611-077"){
+                console.log("Monitoring data for terminal 611-077:", m);
+            }
         });
 
         /* ===============================
