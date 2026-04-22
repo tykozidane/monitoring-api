@@ -109,7 +109,7 @@ export const getSummaryTelemetricsService = async (c_project) => {
                 if (metric.c_metrics_type === "network") {
                     if(!lastTime) continue; // jika belum pernah monitoring, skip cek network
                     const isDown =  (now - lastTime > interval * 60000);
-                    console.log(`Checking network for terminal ${t.c_terminal_sn} IsDown: ${isDown}`);
+                    // console.log(`Checking network for terminal ${t.c_terminal_sn} IsDown: ${isDown}`);
                     if (isDown) {
                         hasDanger = true;
                         matricsSend.push({
@@ -207,7 +207,7 @@ export const getSummaryTelemetricsService = async (c_project) => {
         };
 
     } catch (err) {
-        console.error("Error in getSummaryTelemetricsService:", err);
+        // console.error("Error in getSummaryTelemetricsService:", err);
         return {
             code: "5000",
             message: "Failed summary telemetrics",

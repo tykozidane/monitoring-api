@@ -27,9 +27,6 @@ export const getMonitoringSummaryService = async (c_project) => {
         latestMonitoring.rows.forEach(m => {
             const key = `${m.c_project}_${m.c_terminal_sn}`;
             monitoringMap.set(key, m);
-            if(m.c_terminal_sn === "611-077"){
-                console.log("Monitoring data for terminal 611-077:", m);
-            }
         });
 
         /* ===============================
@@ -142,11 +139,6 @@ export const getMonitoringSummaryService = async (c_project) => {
             let status = monitoring && monitoring.n_status ? normalize(monitoring.n_status) : "NO_DATA";
             const interval = settings ? parseInt(settings.c_setting_value) : 5;
             const now = new Date();
-            if(row.c_terminal_sn === "611-077"){
-                console.log("Debug Terminal 611-077:", monitoring.n_station);
-            console.log("check Terminal ", status, " d_monitoring " , monitoring.d_monitoring)
-
-            }
             if(monitoring && monitoring.d_monitoring) {
             // console.log(`Processing terminal ${row.c_terminal_sn} at station ${row.n_station}`);
                 const diffMinutes = (now - new Date(monitoring.d_monitoring)) / 1000 / 60;  
@@ -160,15 +152,9 @@ export const getMonitoringSummaryService = async (c_project) => {
                     })
                 } 
                 const dataTypesForTerminal = dataTypes.filter(dt => dt.c_project === row.c_project && dt.c_terminal_type === row.c_terminal_type);
-                if(row.c_terminal_sn === "611-077"){
-                            console.log(`Data for terminal 611-077, data type `, dataTypesForTerminal);
-                        }
                 for (const dataTypeMap of dataTypesForTerminal || []) {
                     const dataM = monitoring.data ? monitoring.data.find(d => d.c_data_type === dataTypeMap.c_data_type) : null;
                     if(dataM) {
-                        if(row.c_terminal_sn === "611-077"){
-                            console.log(`Data for terminal 611-077, data type ${dataTypeMap.c_data_type}:`, dataM);
-                        }
                         if(dataM.status === "DANGER" || dataM.status === "WARNING") {
                             matricsSend.push({
                                 status : dataM.status,
@@ -295,7 +281,6 @@ export const getMonitoringSummaryService = async (c_project) => {
         };
 
     } catch (err) {
-        console.error("Error in getMonitoringSummaryService:", err);
         return {
             code: "5000",
             message: "Failed to get monitoring summary",
