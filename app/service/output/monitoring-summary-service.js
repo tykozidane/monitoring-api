@@ -136,7 +136,7 @@ export const getMonitoringSummaryService = async (c_project) => {
             // const configs = metricsMap[configKey] || [];
             let matricsSend = [];
 
-            let status = "NO_DATA";
+            let status = row.n_status ? normalize(row.n_status) : "NO_DATA";
             const interval = settings ? parseInt(settings.c_setting_value) : 5;
             const now = new Date();
             if(monitoring && monitoring.d_monitoring) {
@@ -164,9 +164,9 @@ export const getMonitoringSummaryService = async (c_project) => {
                             });
                             if(status === "DANGER") {
                                 status = "DANGER"; 
-                            } else if(status === "WARNING" && dataM.status === "DANGER") {
-                                status = "DANGER";
-                            } else {
+                            } else if(status === "WARNING" && (dataM.status === "DANGER" || dataM.status === "WARNING")) {
+                                status = dataM.status;
+                            } else if(dataM.status !== "NO_DATA") {
                                 status = dataM.status;
                             }
                             
