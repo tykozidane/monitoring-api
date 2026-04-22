@@ -45,7 +45,7 @@ export const getMonitoringSummaryService = async (c_project) => {
                 "st.n_station",
                 "st.n_lat",
                 "st.n_lng",
-
+                "t.c_terminal_type",
                 "t.c_terminal_sn",
                 "t.n_terminal_name",
                 "t.n_lat as t_lat",
