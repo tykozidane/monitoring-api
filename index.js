@@ -10,6 +10,7 @@ import integration from './app/controller/integration/integration.routes.js'
 import station from './app/controller/station/station.routes.js'
 import device from './app/controller/device/device.routes.js'
 import project from './app/controller/project/project.routes.js'
+import dataType from './app/controller/data-type/data-type.routes.js'
 import appRoutes from './app/controller/app/app.routes.js';
 import auth from './app/controller/auth/auth.routes.js';
 import basicAuth from './app/middleware/basic-auth.js';
@@ -52,6 +53,7 @@ router.use("/device", device);
 router.use("/project", project);
 router.use("/app", appRoutes);
 router.use("/auth", auth);
+router.use("/data-type", dataType);
 
 //CRON
 startMonitoringServerCron();

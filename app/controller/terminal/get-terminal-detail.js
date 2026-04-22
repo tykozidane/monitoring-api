@@ -18,7 +18,7 @@ const controller = async (req, res) => {
         }
 
         const result = await getTerminalDetail(c_terminal_sn, c_project);
-
+        
         if (!result.message) {
         throw {
             code: "4040",
