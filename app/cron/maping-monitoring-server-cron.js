@@ -115,7 +115,7 @@ export const runServerMonitoringCron = async () => {
                         valResult = result.rows[0].postgresql_up;
                         monitoringData.push({
                             c_data_type: dt.c_data_type,
-                            value: valResult,
+                            value: Number(valResult) || null,
                             measure: valResult === '1' ? 'RUNNING' : 'NOT RUNNING',
                             status : valResult === '1' ? 'NORMAL' : 'DANGER', // 🔥 sementara hardcode, nanti sesuaikan dengan getStatus
                             notes: valResult === '1' ? 'RUNNING' : 'NOT RUNNING'
@@ -124,7 +124,7 @@ export const runServerMonitoringCron = async () => {
                         valResult = null;
                         monitoringData.push({
                             c_data_type: dt.c_data_type,
-                            value: valResult,
+                            value: null,
                             measure: 'NO DATA',
                             status : 'NO DATA', // 🔥 sementara hardcode, nanti sesuaikan dengan getStatus
                             notes: null
