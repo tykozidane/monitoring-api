@@ -96,7 +96,7 @@ export const runServerMonitoringCron = async () => {
                                 value: +Number(row.usage_percent).toFixed(2),
                                 status: status,
                                 measure: '%',
-                                c_data_type: `disk_usage_${row.mountpoint.replace('/', '').toLowerCase() || 'root'}`
+                                c_data_type: `DISK_USAGE_${row.mountpoint.replace('/', '').toUpperCase() || 'ROOT'}`
                             };
                             });
                         monitoringData.push(...data);
