@@ -113,9 +113,24 @@ export const runServerMonitoringCron = async () => {
                         `)
                     if (result.rows.length) {
                         valResult = result.rows[0].postgresql_up;
+                        monitoringData.push({
+                            c_data_type: dt.c_data_type,
+                            value: valResult,
+                            measure: valResult === '1' ? 'RUNNING' : 'NOT RUNNING',
+                            status : valResult === '1' ? 'NORMAL' : 'DANGER', // 🔥 sementara hardcode, nanti sesuaikan dengan getStatus
+                            notes: valResult === '1' ? 'RUNNING' : 'NOT RUNNING'
+                        });
                     } else {
                         valResult = null;
+                        monitoringData.push({
+                            c_data_type: dt.c_data_type,
+                            value: valResult,
+                            measure: 'NO DATA',
+                            status : 'NO DATA', // 🔥 sementara hardcode, nanti sesuaikan dengan getStatus
+                            notes: null
+                        });
                     }
+                    continue; // skip ke loop data type berikutnya karena sudah masukin data postgresql_up
                 } else if(dt.c_data_type === "cpu_usage") {
                     const result = await dbserver.raw(`WITH base AS (
                         SELECT
@@ -222,7 +237,7 @@ export const runServerMonitoringCron = async () => {
 
                 monitoringData.push({
                     c_data_type: dt.c_data_type,
-                    value: valResult,
+                    value: Number(valResult) || null,
                     measure: dt.n_measure,
                     status : "NORMAL", // 🔥 sementara hardcode, nanti sesuaikan dengan getStatus
                     notes: notes
