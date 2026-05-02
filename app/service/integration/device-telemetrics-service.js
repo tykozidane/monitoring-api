@@ -86,7 +86,7 @@ export const getDeviceTelemetrics = async (c_project, serial_number) => {
             value: disk.value ?? null,
             status: disk.status ?? "NO_DATA",
             measure: disk.measure ?? null,
-            c_data_type: disk.c_data_type,
+            c_data_type: disk.c_data_type.toUpperCase(), // pastikan disk_usage_XXX menjadi DISK_USAGE_XXX
             notes: disk.notes ?? null
         }));
     }
