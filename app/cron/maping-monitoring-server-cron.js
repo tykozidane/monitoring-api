@@ -93,7 +93,7 @@ export const runServerMonitoringCron = async () => {
                             const status = getStatus(row.usage_percent, dt);
                             return {
                                 notes: `${row.used_gb}GB dari ${row.total_gb}GB`,
-                                value: Number(row.usage_percent),
+                                value: Number(row.usage_percent.toFixed(2)),
                                 status: status,
                                 measure: '%',
                                 c_data_type: `disk_usage_${row.mountpoint.replace('/', '').toLowerCase() || 'root'}`
@@ -237,7 +237,7 @@ export const runServerMonitoringCron = async () => {
 
                 monitoringData.push({
                     c_data_type: dt.c_data_type,
-                    value: Number(valResult) || null,
+                    value: Number(valResult.toFixed(2)) || null,
                     measure: dt.n_measure,
                     status : "NORMAL", // 🔥 sementara hardcode, nanti sesuaikan dengan getStatus
                     notes: notes
