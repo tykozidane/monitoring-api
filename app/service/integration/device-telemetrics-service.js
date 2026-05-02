@@ -58,7 +58,7 @@ export const getDeviceTelemetrics = async (c_project, serial_number) => {
         const now = new Date();
 
         /** 5️⃣ Build metrics response */
-        const metrics = metricsConfig.map(metric => {
+        const metrics = metricsConfig.flatMap(metric => {
 
         // NETWORK special handling
         if (metric.c_metrics_type === "network") {
@@ -77,7 +77,19 @@ export const getDeviceTelemetrics = async (c_project, serial_number) => {
             c_data_type: metric.c_data_type,
             notes: null
             };
-        }
+        } else if (metric.c_metrics_type === "disk_list") {
+        const disks = monitoringData.filter(m =>
+            m.c_data_type.startsWith("disk_usage_")
+        );
+
+        return disks.map(disk => ({
+            value: disk.value ?? null,
+            status: disk.status ?? "NO_DATA",
+            measure: disk.measure ?? null,
+            c_data_type: disk.c_data_type,
+            notes: disk.notes ?? null
+        }));
+    }
 
         // find matching metric from monitoring.data
         const found = monitoringData.find(
