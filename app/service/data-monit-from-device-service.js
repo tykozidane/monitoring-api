@@ -333,14 +333,30 @@ for (const dt of dataTypes) {
             ========================== */
 
             // ambil semua device yang terdaftar untuk terminal ini
-            const masterDevices = await trx("master.t_m_device")
-                .where({
-                    c_project,
-                    c_terminal_sn: terminal.c_terminal_sn,
-                    b_active: true,
-                    d_deleted_at: null
-                });
+            // const masterDevices = await trx("master.t_m_device")
+            //     .where({
+            //         c_project,
+            //         c_terminal_sn: terminal.c_terminal_sn,
+            //         b_active: true,
+            //         d_deleted_at: null
+            //     });
 
+            // ambil semua device yang terdaftar untuk terminal ini, sekaligus cek aksesnya
+            const masterDevices = await trx("master.t_m_device as d")
+                .join("master.t_m_device_accessible as a", function () {
+                    this.on("d.c_device_type", "=", "a.c_device_type")
+                        .andOn("d.c_project", "=", "a.c_project")
+                        .andOn("a.c_terminal_type", "=", trx.raw("?", [terminal.c_terminal_type]))
+                        .andOn("a.b_active", "=", trx.raw("true"))
+                        .andOnNull("a.d_deleted_at");
+                })
+                .where({
+                    "d.c_project": c_project,
+                    "d.c_terminal_sn": terminal.c_terminal_sn,
+                    "d.b_active": true
+                })
+                .whereNull("d.d_deleted_at")
+                .select("d.c_device", "d.c_serial_number", "d.c_device_type", "d.c_direction" );
             const devices = [];
 
             for (const md of masterDevices) {
