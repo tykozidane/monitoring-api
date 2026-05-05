@@ -41,7 +41,7 @@ export const getTerminalByStation = async (c_station, c_project) => {
         }
 
         const result = await query
-            .distinctOn("t.c_terminal_sn")
+            // .distinctOn("t.c_terminal_sn")
             .orderBy("t.c_terminal_sn")
             .orderBy("md.d_monitoring", "desc");
 
