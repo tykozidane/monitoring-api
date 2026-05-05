@@ -15,7 +15,7 @@ const controller = async (req, res) => {
             c_station
         } = req.body;
 
-        const createdBy = req.user?.username || "system";
+        const createdBy = req.user?.username || req.username || "system";
 
         /* =========================
             VALIDASI REQUIRED
