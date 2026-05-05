@@ -27,11 +27,25 @@ export const getTerminalByStation = async (c_station, c_project) => {
 
             .join({ p: "config.t_d_project" }, "p.c_project", "t.c_project")
 
-            .leftJoin({ md: "opr.t_d_monitoring_device" }, function () {
-                this.on("md.c_terminal_sn", "=", "t.c_terminal_sn")
-                    .andOn("md.c_project", "=", "t.c_project");
-            })
-
+            // .leftJoin({ md: "opr.t_d_monitoring_device" }, function () {
+            //     this.on("md.c_terminal_sn", "=", "t.c_terminal_sn")
+            //         .andOn("md.c_project", "=", "t.c_project");
+            // })
+            // 🔥 LATERAL JOIN FIX
+                .leftJoin(
+                    db.raw(`
+                        LATERAL (
+                            SELECT *
+                            FROM opr.t_d_monitoring_device md
+                            WHERE md.c_terminal_sn = t.c_terminal_sn
+                            AND md.c_project = t.c_project
+                            ORDER BY md.d_monitoring DESC
+                            LIMIT 1
+                        ) md
+                    `),
+                    db.raw("true"),
+                    db.raw("true")
+                )
             .where("t.b_active", true)
             .andWhere("t.c_project", c_project);
 
