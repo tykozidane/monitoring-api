@@ -219,6 +219,36 @@ for (const dt of dataTypes) {
     }
 
     /* =========================
+        DATABASE
+    ========================== */
+    if (dt.c_collect_type === "database") {
+        const value = body[dt.c_data_type];
+        if (value === undefined) {
+            monitoringData.push({
+                c_data_type: dt.c_data_type,
+                value: 0,
+                measure: dt.n_measure || "",
+                status: "NO_DATA",
+                notes: "Data tidak ditemukan pada request body"
+            });
+            elasticData[dt.c_data_type] = null;
+            elasticData[`${dt.c_data_type}_status`] = "NO_DATA";
+            continue;
+        }
+        const status = getStatus(value, dt);
+
+        monitoringData.push({
+            c_data_type: dt.c_data_type,
+            value : value.status,
+            measure: value === 0 ? "RUNNING" : "NOT RUNNING",
+            status: value === 0 ? "NORMAL" : "DANGER",
+            notes: value.description
+        });
+        elasticData[dt.c_data_type] = value;
+        elasticData[`${dt.c_data_type}_status`] = status;
+    }
+
+    /* =========================
         APPLICATION
     ========================== */
     if (dt.c_collect_type === "application") {

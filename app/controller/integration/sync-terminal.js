@@ -8,14 +8,14 @@ import { insertItem } from "../../service/integration/sync-terminal-service.js";
 
 const controller = async (req, res) => {
     try {
-        const { item_serial_code, item } = req.body;
+        const { item_serial_code, item, serial_number } = req.body;
         const createdBy = req.user?.username || "system";
         const signature = req.headers["x-signature"];
 
-        if (!item_serial_code) {
+        if (!item_serial_code || !serial_number) {
         throw {
             code: "4000",
-            message: "item_serial_code is required"
+            message: "item_serial_code and serial_number are required"
         };
         }
 

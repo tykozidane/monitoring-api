@@ -23,7 +23,8 @@ export const insertItem = async (payload, createdBy, signature) => {
          */
         await trx("sync.t_m_sync_terminal")
         .where({
-            item_serial_code,
+            // item_serial_code,
+            serial_number,
             // client_name,
             b_mapping: false,
             b_active: true
