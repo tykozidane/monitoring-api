@@ -33,5 +33,5 @@ const fileFilter = (req, file, cb) => {
 export const uploadZip = multer({
     storage,
     fileFilter,
-    limits: { fileSize: 50 * 1024 * 1024 } // 50MB
+    limits: { fileSize: 100 * 1024 * 1024 } // 50MB
 });
