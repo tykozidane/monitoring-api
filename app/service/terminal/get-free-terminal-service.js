@@ -32,6 +32,7 @@ export const getFreeTerminalService = async (c_project = null) => {
     })
     .whereNull("t.c_terminal_sn")
     .where("t.b_active", true)
+    .where("s.b_active", true)
     .whereNull("t.d_deleted_at")
     .orderBy("t.c_terminal_01", "asc");
 
