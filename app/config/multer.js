@@ -24,8 +24,8 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-    if (path.extname(file.originalname).toLowerCase() !== ".zip") {
-        return cb(new Error("Only .zip files are allowed"));
+    if (path.extname(file.originalname).toLowerCase() !== ".zip" && path.extname(file.originalname).toLowerCase() !== ".json") {
+        return cb(new Error("Only .zip and .json files are allowed"));
     }
     cb(null, true);
 };
