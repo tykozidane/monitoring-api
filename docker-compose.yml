@@ -8,6 +8,7 @@ services:
       - "4000:4000"
     volumes:
       - ./storage/app:/app/storage/app
+      - ./log-api:/app/log-api
     restart: always
     env_file:
       - .env
