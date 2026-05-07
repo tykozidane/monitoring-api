@@ -47,6 +47,7 @@ export const getTerminalByStation = async (c_station, c_project) => {
                     db.raw("true")
                 )
             .where("t.b_active", true)
+            .where("st.b_active", true)
             .andWhere("t.c_project", c_project);
 
         // 🔥 conditional filter
