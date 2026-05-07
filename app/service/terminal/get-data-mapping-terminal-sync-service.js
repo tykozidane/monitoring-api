@@ -29,8 +29,10 @@ export const getDataMappingTerminalSyncService = async (
             .where({
                 serial_number,
                 c_project,
-                b_active: true
+                b_active: true,
+                b_mapping: false
             })
+            .orderBy("d_created_at", "desc")
             .first();
 
         /* =========================
