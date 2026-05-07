@@ -179,6 +179,8 @@ export const getMonitoringSummaryService = async (c_project) => {
                 (dataM.status === "DANGER" || dataM.status === "WARNING")
               ) {
                 status = dataM.status;
+              } else if (dataM.status === "NO_DATA") {
+                status = dataM.status;
               } else if (dataM.status !== "NO_DATA") {
                 status = dataM.status;
               }
