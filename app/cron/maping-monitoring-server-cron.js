@@ -50,7 +50,6 @@ export const runServerMonitoringCron = async () => {
             3️⃣ LOOP TERMINAL
         ========================== */
         for (const terminal of terminals) {
-            console.log(`Collecting data for terminal: ${terminal.c_terminal_sn} - ${terminal.c_terminal_02}`);
             const monitoringData = [];
 
             /* =========================
@@ -61,7 +60,6 @@ export const runServerMonitoringCron = async () => {
                 // const collector = collectors[dt.c_data_type];
                 let valResult = 0;
                 let notes = null;
-                console.log(`Collecting ${dt.c_data_type} `);
                 // if (!collector) continue; // skip kalau belum ada logic
 
                 if(dt.c_data_type === "disk_usage") {
@@ -278,7 +276,7 @@ export const runServerMonitoringCron = async () => {
             } else if (monitoringData.some(d => d.status === "WARNING")) {
                 n_status = "WARNING";
             }
-            console.log(`Overall status for terminal ${terminal.c_terminal_sn}: ${n_status}`);
+
             /* =========================
                 5️⃣ INSERT MONITORING
             ========================== */
@@ -288,7 +286,6 @@ export const runServerMonitoringCron = async () => {
                 .count("i_id as total")
                 .first();
             if (Number(total.total) < 10) {
-                console.log(`Inserting new monitoring data for terminal: ${terminal.c_terminal_sn} - ${terminal.c_terminal_02}`);
             /* =========================
             INSERT BARU
             ========================== */
@@ -302,7 +299,6 @@ export const runServerMonitoringCron = async () => {
             });
 
         } else {
-            console.log(`Updating existing monitoring data for terminal: ${terminal.c_terminal_sn} - ${terminal.c_terminal_02}`);
             /* =========================
             UPDATE DATA PALING LAMA
             ========================== */
