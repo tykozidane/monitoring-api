@@ -21,6 +21,7 @@ const getStatus = (value, dt) => {
 export const runServerMonitoringCron = async () => {
     cron.schedule("10 */3 * * * *", async () => {
         console.log("Running server monitoring cron:", new Date().toISOString());
+    const trx = await db.transaction();
     
     try {
 
@@ -280,8 +281,6 @@ export const runServerMonitoringCron = async () => {
             /* =========================
                 5️⃣ INSERT MONITORING
             ========================== */
-    const trx = await db.transaction();
-
             // hitung total data monitoring
             const total = await trx("opr.t_d_monitoring_device")
                 .where({ c_project : terminal.c_project, c_terminal_sn: terminal.c_terminal_sn, c_station: terminal.c_station })
@@ -334,9 +333,7 @@ export const runServerMonitoringCron = async () => {
         console.log("✅ Server monitoring cron executed");
 
     } catch (err) {
-        if (trx) {
-            await trx.rollback();
-        }
+        await trx.rollback();
         console.error("❌ Server monitoring cron failed:", err);
     }
     });
