@@ -48,7 +48,7 @@ export const runServerMonitoringCron = async () => {
             3️⃣ LOOP TERMINAL
         ========================== */
         for (const terminal of terminals) {
-
+            console.log(`Collecting data for terminal: ${terminal.c_terminal_sn} - ${terminal.c_terminal_02}`);
             const monitoringData = [];
 
             /* =========================
@@ -89,6 +89,7 @@ export const runServerMonitoringCron = async () => {
                             ROUND(((size_bytes - avail_bytes) / size_bytes) * 100, 2) AS usage_percent
                         FROM disk_data;
                         `)
+                        if (result.rows.length) {
                         const data = result.rows.map(row => {
                             const status = getStatus(row.usage_percent, dt);
                             return {
@@ -100,6 +101,17 @@ export const runServerMonitoringCron = async () => {
                             };
                             });
                         monitoringData.push(...data);
+                    } else {
+                        valResult = null;
+                        monitoringData.push({
+                            c_data_type: dt.c_data_type,
+                            value: null,
+                            measure: 'NO DATA',
+                            status : 'NO DATA', // 🔥 sementara hardcode, nanti sesuaikan dengan getStatus
+                            notes: null
+                        });
+                    }
+                        
                         continue; // skip ke loop data type berikutnya karena sudah masukin semua disk
                 } else if(dt.c_data_type === "postgresql_up") {
                     const result = await dbserver.raw(`
@@ -254,7 +266,7 @@ export const runServerMonitoringCron = async () => {
             } else if (monitoringData.some(d => d.status === "WARNING")) {
                 n_status = "WARNING";
             }
-
+            
             /* =========================
                 5️⃣ INSERT MONITORING
             ========================== */
@@ -264,7 +276,7 @@ export const runServerMonitoringCron = async () => {
                 .count("i_id as total")
                 .first();
             if (Number(total.total) < 10) {
-
+                console.log(`Inserting new monitoring data for terminal: ${terminal.c_terminal_sn} - ${terminal.c_terminal_02}`);
             /* =========================
             INSERT BARU
             ========================== */
