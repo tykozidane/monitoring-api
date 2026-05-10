@@ -59,7 +59,7 @@ export const runServerMonitoringCron = async () => {
                 // const collector = collectors[dt.c_data_type];
                 let valResult = 0;
                 let notes = null;
-                // console.log(`Collecting ${dt.c_data_type} `);
+                console.log(`Collecting ${dt.c_data_type} `);
                 // if (!collector) continue; // skip kalau belum ada logic
 
                 if(dt.c_data_type === "disk_usage") {
@@ -266,7 +266,7 @@ export const runServerMonitoringCron = async () => {
             } else if (monitoringData.some(d => d.status === "WARNING")) {
                 n_status = "WARNING";
             }
-            
+            console.log(`Overall status for terminal ${terminal.c_terminal_sn}: ${n_status}`);
             /* =========================
                 5️⃣ INSERT MONITORING
             ========================== */
