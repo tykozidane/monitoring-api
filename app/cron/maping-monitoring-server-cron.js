@@ -334,7 +334,9 @@ export const runServerMonitoringCron = async () => {
         console.log("✅ Server monitoring cron executed");
 
     } catch (err) {
-        await trx.rollback();
+        if (trx) {
+            await trx.rollback();
+        }
         console.error("❌ Server monitoring cron failed:", err);
     }
     });

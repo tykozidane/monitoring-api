@@ -15,7 +15,7 @@ export const getSettingsByProject = async (c_project) => {
             "basic_auth_username",
             "basic_auth_password"
         ]);
-        console.log(rows)
+        // console.log(rows)
         // Default object
         return {
         url_api: rows.find(r => r.c_setting_key === "url_api")?.c_setting_value || null,
