@@ -212,6 +212,7 @@ export const runServerMonitoringCron = async () => {
                             FROM public.prometheus
                             WHERE tags->>'source' = '${terminal.c_terminal_02}'
                             AND (fields \\? 'node_memory_MemTotal_bytes' OR fields \\? 'node_memory_MemAvailable_bytes')
+                            AND time >= NOW() AT TIME ZONE 'UTC'  - INTERVAL '6 minutes'
                         ),
                         memory_data AS (
                             SELECT 
