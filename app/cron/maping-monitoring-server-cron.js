@@ -19,7 +19,7 @@ const getStatus = (value, dt) => {
     CRON MAIN
 ========================= */
 export const runServerMonitoringCron = async () => {
-    cron.schedule("10 3 * * * *", async () => {
+    cron.schedule("10 */3 * * * *", async () => {
         console.log("Running server monitoring cron:", new Date().toISOString());
     const trx = await db.transaction();
     
