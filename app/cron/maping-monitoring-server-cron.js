@@ -21,16 +21,17 @@ const getStatus = (value, dt) => {
 export const runServerMonitoringCron = async () => {
     cron.schedule("10 */3 * * * *", async () => {
         console.log("Running server monitoring cron:", new Date().toISOString());
-    const trx = await db.transaction();
     
     try {
 
         /* =========================
             1️⃣ GET TERMINAL SERVERS
         ========================== */
-        const terminals = await trx("master.t_m_terminal")
+        const terminals = await db("master.t_m_terminal")
             .where("c_terminal_type", "SERVERS")
             .where("b_active", true)
+            .whereNotNull("c_terminal_02") // pastikan c_terminal_02 (source metric) tidak null
+            .whereNotNull("c_terminal_sn") // pastikan c_terminal_sn tidak null
             .whereNull("d_deleted_at");
 
         if (!terminals.length) return;
@@ -38,7 +39,7 @@ export const runServerMonitoringCron = async () => {
         /* =========================
             2️⃣ GET DATA TYPE SERVERS
         ========================== */
-        const dataTypes = await trx("master.t_m_data_type")
+        const dataTypes = await db("master.t_m_data_type")
             .where("c_terminal_type", "SERVERS")
             .where("b_active", true);
 
@@ -89,7 +90,7 @@ export const runServerMonitoringCron = async () => {
                             ROUND(((size_bytes - avail_bytes) / size_bytes) * 100, 2) AS usage_percent
                         FROM disk_data;
                         `)
-                        if (result.rows.length) {
+                        if (result.rows.length > 0) {
                         const data = result.rows.map(row => {
                             const status = getStatus(row.usage_percent, dt);
                             return {
@@ -123,7 +124,7 @@ export const runServerMonitoringCron = async () => {
                         AND fields \\? 'postgresql_up'
                         LIMIT 1;
                         `)
-                    if (result.rows.length) {
+                    if (result && result.rows.length > 0) {
                         valResult = result.rows[0].postgresql_up;
                         monitoringData.push({
                             c_data_type: dt.c_data_type,
@@ -198,7 +199,7 @@ export const runServerMonitoringCron = async () => {
                     FROM final
                     ORDER BY time desc 
                     limit 1;`);
-                    if (result.rows.length) {
+                    if (result && result.rows.length > 0) {
                         valResult = result.rows[0].cpu_usage;
                     } else {
                         valResult = null;
@@ -238,13 +239,13 @@ export const runServerMonitoringCron = async () => {
                         FROM 
                             memory_data;
                         `);
-                    if (result.rows.length) {
+                    if (result && result.rows.length > 0) {
                         valResult = result.rows[0].memory_usage_gb;
                     } else {
                         valResult = null;
                     }
                 }
-
+                if(valResult !== null) {
                 const status = getStatus(valResult, dt);
 
                 monitoringData.push({
@@ -254,6 +255,15 @@ export const runServerMonitoringCron = async () => {
                     status : "NORMAL", // 🔥 sementara hardcode, nanti sesuaikan dengan getStatus
                     notes: notes
                 });
+                } else {
+                    monitoringData.push({
+                            c_data_type: dt.c_data_type,
+                            value: null,
+                            measure: 'NO DATA',
+                            status : 'NO DATA', // 🔥 sementara hardcode, nanti sesuaikan dengan getStatus
+                            notes: null
+                        });
+                }
             }
 
             /* =========================
@@ -270,6 +280,8 @@ export const runServerMonitoringCron = async () => {
             /* =========================
                 5️⃣ INSERT MONITORING
             ========================== */
+    const trx = await db.transaction();
+
             // hitung total data monitoring
             const total = await trx("opr.t_d_monitoring_device")
                 .where({ c_project : terminal.c_project, c_terminal_sn: terminal.c_terminal_sn, c_station: terminal.c_station })

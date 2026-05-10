@@ -31,6 +31,8 @@ export const runServerMonitoringCron = async () => {
         const terminals = await trx("master.t_m_terminal")
             .where("c_terminal_type", "SERVERS")
             .where("b_active", true)
+            .whereNotNull("c_terminal_02") // pastikan c_terminal_02 (source metric) tidak null
+            .whereNotNull("c_terminal_sn") // pastikan c_terminal_sn tidak null
             .whereNull("d_deleted_at");
 
         if (!terminals.length) return;
@@ -48,7 +50,7 @@ export const runServerMonitoringCron = async () => {
             3️⃣ LOOP TERMINAL
         ========================== */
         for (const terminal of terminals) {
-
+            console.log(`Collecting data for terminal: ${terminal.c_terminal_sn} - ${terminal.c_terminal_02}`);
             const monitoringData = [];
 
             /* =========================
@@ -59,7 +61,7 @@ export const runServerMonitoringCron = async () => {
                 // const collector = collectors[dt.c_data_type];
                 let valResult = 0;
                 let notes = null;
-                // console.log(`Collecting ${dt.c_data_type} `);
+                console.log(`Collecting ${dt.c_data_type} `);
                 // if (!collector) continue; // skip kalau belum ada logic
 
                 if(dt.c_data_type === "disk_usage") {
@@ -89,6 +91,7 @@ export const runServerMonitoringCron = async () => {
                             ROUND(((size_bytes - avail_bytes) / size_bytes) * 100, 2) AS usage_percent
                         FROM disk_data;
                         `)
+                        if (result.rows.length > 0) {
                         const data = result.rows.map(row => {
                             const status = getStatus(row.usage_percent, dt);
                             return {
@@ -100,6 +103,17 @@ export const runServerMonitoringCron = async () => {
                             };
                             });
                         monitoringData.push(...data);
+                    } else {
+                        valResult = null;
+                        monitoringData.push({
+                            c_data_type: dt.c_data_type,
+                            value: null,
+                            measure: 'NO DATA',
+                            status : 'NO DATA', // 🔥 sementara hardcode, nanti sesuaikan dengan getStatus
+                            notes: null
+                        });
+                    }
+                        
                         continue; // skip ke loop data type berikutnya karena sudah masukin semua disk
                 } else if(dt.c_data_type === "postgresql_up") {
                     const result = await dbserver.raw(`
@@ -111,7 +125,7 @@ export const runServerMonitoringCron = async () => {
                         AND fields \\? 'postgresql_up'
                         LIMIT 1;
                         `)
-                    if (result.rows.length) {
+                    if (result && result.rows.length > 0) {
                         valResult = result.rows[0].postgresql_up;
                         monitoringData.push({
                             c_data_type: dt.c_data_type,
@@ -186,7 +200,7 @@ export const runServerMonitoringCron = async () => {
                     FROM final
                     ORDER BY time desc 
                     limit 1;`);
-                    if (result.rows.length) {
+                    if (result && result.rows.length > 0) {
                         valResult = result.rows[0].cpu_usage;
                     } else {
                         valResult = null;
@@ -226,13 +240,13 @@ export const runServerMonitoringCron = async () => {
                         FROM 
                             memory_data;
                         `);
-                    if (result.rows.length) {
+                    if (result && result.rows.length > 0) {
                         valResult = result.rows[0].memory_usage_gb;
                     } else {
                         valResult = null;
                     }
                 }
-
+                if(valResult !== null) {
                 const status = getStatus(valResult, dt);
 
                 monitoringData.push({
@@ -242,6 +256,15 @@ export const runServerMonitoringCron = async () => {
                     status : "NORMAL", // 🔥 sementara hardcode, nanti sesuaikan dengan getStatus
                     notes: notes
                 });
+                } else {
+                    monitoringData.push({
+                            c_data_type: dt.c_data_type,
+                            value: null,
+                            measure: 'NO DATA',
+                            status : 'NO DATA', // 🔥 sementara hardcode, nanti sesuaikan dengan getStatus
+                            notes: null
+                        });
+                }
             }
 
             /* =========================
@@ -254,7 +277,7 @@ export const runServerMonitoringCron = async () => {
             } else if (monitoringData.some(d => d.status === "WARNING")) {
                 n_status = "WARNING";
             }
-
+            console.log(`Overall status for terminal ${terminal.c_terminal_sn}: ${n_status}`);
             /* =========================
                 5️⃣ INSERT MONITORING
             ========================== */
@@ -264,7 +287,7 @@ export const runServerMonitoringCron = async () => {
                 .count("i_id as total")
                 .first();
             if (Number(total.total) < 10) {
-
+                console.log(`Inserting new monitoring data for terminal: ${terminal.c_terminal_sn} - ${terminal.c_terminal_02}`);
             /* =========================
             INSERT BARU
             ========================== */
@@ -278,7 +301,7 @@ export const runServerMonitoringCron = async () => {
             });
 
         } else {
-
+            console.log(`Updating existing monitoring data for terminal: ${terminal.c_terminal_sn} - ${terminal.c_terminal_02}`);
             /* =========================
             UPDATE DATA PALING LAMA
             ========================== */
