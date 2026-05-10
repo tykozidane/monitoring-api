@@ -290,7 +290,7 @@ export const runServerMonitoringCron = async () => {
             });
 
         } else {
-
+            console.log(`Updating existing monitoring data for terminal: ${terminal.c_terminal_sn} - ${terminal.c_terminal_02}`);
             /* =========================
             UPDATE DATA PALING LAMA
             ========================== */
