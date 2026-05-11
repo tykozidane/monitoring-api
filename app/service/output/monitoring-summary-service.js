@@ -283,6 +283,7 @@ export const getMonitoringSummaryService = async (c_project) => {
         list_nodata.push({
           ...st,
           terminal: filteredTerminal,
+          terminal_total: st.terminal?.length ?? undefined,
         });
       } else {
         st.status = "GREEN";
