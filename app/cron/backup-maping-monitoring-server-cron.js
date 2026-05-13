@@ -21,14 +21,14 @@ const getStatus = (value, dt) => {
 export const runServerMonitoringCron = async () => {
     cron.schedule("10 */3 * * * *", async () => {
         console.log("Running server monitoring cron:", new Date().toISOString());
-    const trx = await db.transaction();
+    // const trx = await db.transaction();
     
     try {
 
         /* =========================
             1️⃣ GET TERMINAL SERVERS
         ========================== */
-        const terminals = await trx("master.t_m_terminal")
+        const terminals = await db("master.t_m_terminal")
             .where("c_terminal_type", "SERVERS")
             .where("b_active", true)
             .whereNotNull("c_terminal_02") // pastikan c_terminal_02 (source metric) tidak null
@@ -40,7 +40,7 @@ export const runServerMonitoringCron = async () => {
         /* =========================
             2️⃣ GET DATA TYPE SERVERS
         ========================== */
-        const dataTypes = await trx("master.t_m_data_type")
+        const dataTypes = await db("master.t_m_data_type")
             .where("c_terminal_type", "SERVERS")
             .where("b_active", true);
 
@@ -50,7 +50,6 @@ export const runServerMonitoringCron = async () => {
             3️⃣ LOOP TERMINAL
         ========================== */
         for (const terminal of terminals) {
-            console.log(`Collecting data for terminal: ${terminal.c_terminal_sn} - ${terminal.c_terminal_02}`);
             const monitoringData = [];
 
             /* =========================
@@ -61,7 +60,6 @@ export const runServerMonitoringCron = async () => {
                 // const collector = collectors[dt.c_data_type];
                 let valResult = 0;
                 let notes = null;
-                console.log(`Collecting ${dt.c_data_type} `);
                 // if (!collector) continue; // skip kalau belum ada logic
 
                 if(dt.c_data_type === "disk_usage") {
@@ -212,6 +210,7 @@ export const runServerMonitoringCron = async () => {
                             FROM public.prometheus
                             WHERE tags->>'source' = '${terminal.c_terminal_02}'
                             AND (fields \\? 'node_memory_MemTotal_bytes' OR fields \\? 'node_memory_MemAvailable_bytes')
+                            AND time >= NOW() AT TIME ZONE 'UTC'  - INTERVAL '6 minutes'
                         ),
                         memory_data AS (
                             SELECT 
@@ -277,35 +276,33 @@ export const runServerMonitoringCron = async () => {
             } else if (monitoringData.some(d => d.status === "WARNING")) {
                 n_status = "WARNING";
             }
-            console.log(`Overall status for terminal ${terminal.c_terminal_sn}: ${n_status}`);
+
             /* =========================
                 5️⃣ INSERT MONITORING
             ========================== */
             // hitung total data monitoring
-            const total = await trx("opr.t_d_monitoring_device")
+            const total = await db("opr.t_d_monitoring_device")
                 .where({ c_project : terminal.c_project, c_terminal_sn: terminal.c_terminal_sn, c_station: terminal.c_station })
                 .count("i_id as total")
                 .first();
             if (Number(total.total) < 10) {
-                console.log(`Inserting new monitoring data for terminal: ${terminal.c_terminal_sn} - ${terminal.c_terminal_02}`);
             /* =========================
             INSERT BARU
             ========================== */
-            await trx("opr.t_d_monitoring_device").insert({
+            await db("opr.t_d_monitoring_device").insert({
                 c_project : terminal.c_project,
                 c_terminal_sn: terminal.c_terminal_sn,
                 c_station: terminal.c_station,
                 d_monitoring: now,
                 n_status: n_status,
-                data: trx.raw("?::jsonb", [JSON.stringify(monitoringData)])
+                data: db.raw("?::jsonb", [JSON.stringify(monitoringData)])
             });
 
         } else {
-            console.log(`Updating existing monitoring data for terminal: ${terminal.c_terminal_sn} - ${terminal.c_terminal_02}`);
             /* =========================
             UPDATE DATA PALING LAMA
             ========================== */
-            const oldest = await trx("opr.t_d_monitoring_device")
+            const oldest = await db("opr.t_d_monitoring_device")
                 .where({ c_project: terminal.c_project, c_terminal_sn: terminal.c_terminal_sn, c_station: terminal.c_station })
                 .orderBy("d_monitoring", "asc")   // 👈 PALING LAMA
                 .first();
@@ -318,22 +315,22 @@ export const runServerMonitoringCron = async () => {
             }
             
 
-            await trx("opr.t_d_monitoring_device")
+            await db("opr.t_d_monitoring_device")
                 .where({ i_id: oldest.i_id })
                 .update({
                     d_monitoring: now,
                     n_status : n_status,
-                    data: trx.raw("?::jsonb", [JSON.stringify(monitoringData)])
+                    data: db.raw("?::jsonb", [JSON.stringify(monitoringData)])
                 });
             }
         }
 
-        await trx.commit();
+        // await trx.commit();
 
         console.log("✅ Server monitoring cron executed");
 
     } catch (err) {
-        await trx.rollback();
+        // await trx.rollback();
         console.error("❌ Server monitoring cron failed:", err);
     }
     });

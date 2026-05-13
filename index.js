@@ -18,7 +18,9 @@ import cors from 'cors';
 import db from "./app/config/database.js";
 import elasticClient from "./app/config/elasticsearch.js";
 import { startMonitoringServerCron } from "./app/cron/monitoring-server-cron.js";
-import { runServerMonitoringCron } from "./app/cron/maping-monitoring-server-cron.js";
+// import { runServerMonitoringCron } from "./app/cron/maping-monitoring-server-cron.js";
+import "./app/cron/maping-monitoring-server-cron.js";
+// import cron from "node-cron";
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
@@ -58,8 +60,10 @@ router.use("/data-type", dataType);
 
 //CRON
 startMonitoringServerCron();
-runServerMonitoringCron();
-
+// runServerMonitoringCron();
+// cron.schedule("10 */2 * * * *", async () => {
+//   runServerMonitoringCron();
+// });
 const port = process.env.APP_PORT || 5000;
 app.listen(port, () => {
   testConnection();
