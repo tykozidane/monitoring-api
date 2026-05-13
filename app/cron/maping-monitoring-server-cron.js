@@ -146,7 +146,7 @@ const processMetric = async (terminal, dt) => {
                             value: Number(result.rows[0].cpu_usage).toFixed(2) || null,
                             measure: dt.n_measure,
                             status : "NORMAL", 
-                            notes: notes
+                            notes: null
                         }];
                     } else {
                         return [{
@@ -206,7 +206,7 @@ const processMetric = async (terminal, dt) => {
                             value: Number(result.rows[0].memory_usage_gb).toFixed(2) || null,
                             measure: dt.n_measure,
                             status : "NORMAL", 
-                            notes: notes
+                            notes: null
                         }];
                     } else {
                         return [{
@@ -416,13 +416,13 @@ export const runServerMonitoringCron = async () => {
     }
 
     isRunning = true;
-
-    try {
-
-        console.log(
+    console.log(
             "🚀 Running MAPPING SERVER MONITORING CRON:",
             new Date().toISOString()
         );
+    try {
+
+        
 
         /* =================================================
             GET TERMINALS
@@ -502,7 +502,7 @@ export const runServerMonitoringCron = async () => {
 */
 
 cron.schedule(
-    "30 * * * * *",
+    "10 * * * * *",
     async () => {
 
         await runServerMonitoringCron();
