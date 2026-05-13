@@ -258,7 +258,7 @@ const processMetric = async (terminal, dt) => {
             DISK
         ================================================= */
 
-        if (dt.c_collect_type === "disk") {
+        if (dt.c_collect_type === "disk_usage") {
 
             const result = await dbserver.raw(`
                         WITH latest_time AS (
