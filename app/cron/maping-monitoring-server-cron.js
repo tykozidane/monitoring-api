@@ -21,7 +21,7 @@ const getStatus = (value, dt) => {
 export const runServerMonitoringCron = async () => {
     cron.schedule("10 */3 * * * *", async () => {
         console.log("Running server monitoring cron:", new Date().toISOString());
-    const trx = await db.transaction();
+    // const trx = await db.transaction();
     
     try {
 
@@ -281,7 +281,7 @@ export const runServerMonitoringCron = async () => {
                 5️⃣ INSERT MONITORING
             ========================== */
             // hitung total data monitoring
-            const total = await trx("opr.t_d_monitoring_device")
+            const total = await db("opr.t_d_monitoring_device")
                 .where({ c_project : terminal.c_project, c_terminal_sn: terminal.c_terminal_sn, c_station: terminal.c_station })
                 .count("i_id as total")
                 .first();
@@ -289,20 +289,20 @@ export const runServerMonitoringCron = async () => {
             /* =========================
             INSERT BARU
             ========================== */
-            await trx("opr.t_d_monitoring_device").insert({
+            await db("opr.t_d_monitoring_device").insert({
                 c_project : terminal.c_project,
                 c_terminal_sn: terminal.c_terminal_sn,
                 c_station: terminal.c_station,
                 d_monitoring: now,
                 n_status: n_status,
-                data: trx.raw("?::jsonb", [JSON.stringify(monitoringData)])
+                data: db.raw("?::jsonb", [JSON.stringify(monitoringData)])
             });
 
         } else {
             /* =========================
             UPDATE DATA PALING LAMA
             ========================== */
-            const oldest = await trx("opr.t_d_monitoring_device")
+            const oldest = await db("opr.t_d_monitoring_device")
                 .where({ c_project: terminal.c_project, c_terminal_sn: terminal.c_terminal_sn, c_station: terminal.c_station })
                 .orderBy("d_monitoring", "asc")   // 👈 PALING LAMA
                 .first();
@@ -315,22 +315,22 @@ export const runServerMonitoringCron = async () => {
             }
             
 
-            await trx("opr.t_d_monitoring_device")
+            await db("opr.t_d_monitoring_device")
                 .where({ i_id: oldest.i_id })
                 .update({
                     d_monitoring: now,
                     n_status : n_status,
-                    data: trx.raw("?::jsonb", [JSON.stringify(monitoringData)])
+                    data: db.raw("?::jsonb", [JSON.stringify(monitoringData)])
                 });
             }
         }
 
-        await trx.commit();
+        // await trx.commit();
 
         console.log("✅ Server monitoring cron executed");
 
     } catch (err) {
-        await trx.rollback();
+        // await trx.rollback();
         console.error("❌ Server monitoring cron failed:", err);
     }
     });
