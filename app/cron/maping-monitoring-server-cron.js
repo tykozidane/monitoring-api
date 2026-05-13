@@ -94,7 +94,7 @@ const processMetric = async (terminal, dt) => {
                             (fields->>'node_cpu_seconds_total')::double precision AS value
                         FROM public.prometheus
                         WHERE tags->>'mode' = 'idle'
-                        AND tags->>'source' = '${terminal.c_terminal_02}'
+                        AND c_station = '${terminal.c_terminal_02}'
                         AND time >= NOW() AT TIME ZONE 'UTC'  - INTERVAL '6 minutes'
                     ),
                     calc AS (
@@ -169,13 +169,13 @@ const processMetric = async (terminal, dt) => {
                         WITH latest_time AS (
                             SELECT MAX("time") AS max_time
                             FROM public.prometheus
-                            WHERE tags->>'source' = '${terminal.c_terminal_02}'
+                            WHERE c_station = '${terminal.c_terminal_02}'
                             AND (fields \\? 'node_memory_MemTotal_bytes' OR fields \\? 'node_memory_MemAvailable_bytes')
                             AND time >= NOW() AT TIME ZONE 'UTC'  - INTERVAL '6 minutes'
                         ),
                         memory_data AS (
                             SELECT 
-                                p.tags->>'source' AS metric_source,
+                                p.c_station AS metric_source,
                                 MAX(CASE 
                                     WHEN p.fields \\? 'node_memory_MemTotal_bytes' 
                                     THEN (p.fields->>'node_memory_MemTotal_bytes')::numeric 
@@ -190,9 +190,9 @@ const processMetric = async (terminal, dt) => {
                             INNER JOIN 
                                 latest_time lt ON p."time" = lt.max_time
                             WHERE 
-                                p.tags->>'source' = '${terminal.c_terminal_02}'
+                                p.c_station = '${terminal.c_terminal_02}'
                             GROUP BY 
-                                p.tags->>'source'
+                                p.c_station
                         )
                         SELECT 
                             metric_source AS source,
@@ -228,10 +228,12 @@ const processMetric = async (terminal, dt) => {
             const result = await dbserver.raw(`
                         SELECT
                             time,
+                            c_station ,
                             fields->>'postgresql_up' AS postgresql_up
                         FROM public.prometheus
                         WHERE time = date_trunc('minute', NOW() AT TIME ZONE 'UTC')
                         AND fields \\? 'postgresql_up'
+                        AND c_station = '${terminal.c_terminal_02}'
                         LIMIT 1;
                         `)
                     if (result && result.rows.length > 0) {
@@ -264,7 +266,7 @@ const processMetric = async (terminal, dt) => {
                         WITH latest_time AS (
                             SELECT MAX(time) AS max_time
                             FROM public.prometheus
-                            WHERE tags->>'source' = '${terminal.c_terminal_02}'
+                            WHERE c_station = '${terminal.c_terminal_02}'
                             AND time >= date_trunc('minute', NOW() AT TIME ZONE 'UTC')
                             AND time < date_trunc('minute', NOW() AT TIME ZONE 'UTC') + INTERVAL '1 minute'
                         ),
@@ -275,7 +277,7 @@ const processMetric = async (terminal, dt) => {
                                 MAX((fields->>'node_filesystem_avail_bytes')::numeric) AS avail_bytes
                             FROM public.prometheus p
                             JOIN latest_time lt ON p.time = lt.max_time
-                            WHERE tags->>'source' = '${terminal.c_terminal_02}'
+                            WHERE c_station = '${terminal.c_terminal_02}'
                             AND tags->>'fstype' NOT IN ('tmpfs', 'overlay')
                             GROUP BY tags->>'mountpoint'
                         )
