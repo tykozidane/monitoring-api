@@ -235,12 +235,13 @@ const processMetric = async (terminal, dt) => {
                         LIMIT 1;
                         `)
                     if (result && result.rows.length > 0) {
+                        const postgresqlUp = result.rows[0].postgresql_up;
                         return [{
                             c_data_type: dt.c_data_type,
-                            value: Number(valResult) || null,
-                            measure: valResult === '1' ? 'RUNNING' : 'NOT RUNNING',
-                            status : valResult === '1' ? 'NORMAL' : 'DANGER', // 🔥 sementara hardcode, nanti sesuaikan dengan getStatus
-                            notes: valResult === '1' ? 'RUNNING' : 'NOT RUNNING'
+                            value: Number(postgresqlUp) || null,
+                            measure: postgresqlUp === '1' ? 'RUNNING' : 'NOT RUNNING',
+                            status : postgresqlUp === '1' ? 'NORMAL' : 'DANGER', // 🔥 sementara hardcode, nanti sesuaikan dengan getStatus
+                            notes: postgresqlUp === '1' ? 'RUNNING' : 'NOT RUNNING'
                         }];
                     } else {
                         return [{
@@ -298,7 +299,6 @@ const processMetric = async (terminal, dt) => {
                             });
                         return data;
                     } else {
-                        valResult = null;
                         return [{
                             c_data_type: dt.c_data_type,
                             value: null,
