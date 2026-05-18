@@ -379,6 +379,11 @@ const processTerminal = async (
         /* =================================================
             INSERT
         ================================================= */
+        const total = await db("opr.t_d_monitoring_device")
+                .where({ c_project : terminal.c_project, c_terminal_sn: terminal.c_terminal_sn, c_station: terminal.c_station })
+                .count("i_id as total")
+                .first();
+            if (Number(total.total) < 10) {
 
         await db("opr.t_d_monitoring_device")
             .insert({
@@ -392,6 +397,28 @@ const processTerminal = async (
                     [JSON.stringify(monitoringData)]
                 )
             });
+            } else {
+            const oldest = await db("opr.t_d_monitoring_device")
+                .where({ c_project: terminal.c_project, c_terminal_sn: terminal.c_terminal_sn, c_station: terminal.c_station })
+                .orderBy("d_monitoring", "asc")   // 👈 PALING LAMA
+                .first();
+
+            if (!oldest) {
+                throw {
+                    code: "1502",
+                    message: "Data monitoring lama tidak ditemukan"
+                };
+            }
+            
+
+            await db("opr.t_d_monitoring_device")
+                .where({ i_id: oldest.i_id })
+                .update({
+                    d_monitoring: now,
+                    n_status : n_status,
+                    data: db.raw("?::jsonb", [JSON.stringify(monitoringData)])
+                });
+            }
 
     } catch (err) {
 
