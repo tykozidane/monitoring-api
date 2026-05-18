@@ -383,7 +383,7 @@ const processTerminal = async (
                 .where({ c_project : terminal.c_project, c_terminal_sn: terminal.c_terminal_sn, c_station: terminal.c_station })
                 .count("i_id as total")
                 .first();
-            if (Number(total.total) < 10) {
+        if (Number(total.total) < 10) {
 
         await db("opr.t_d_monitoring_device")
             .insert({
@@ -414,7 +414,7 @@ const processTerminal = async (
             await db("opr.t_d_monitoring_device")
                 .where({ i_id: oldest.i_id })
                 .update({
-                    d_monitoring: now,
+                    d_monitoring: monitoringTime,
                     n_status : n_status,
                     data: db.raw("?::jsonb", [JSON.stringify(monitoringData)])
                 });
