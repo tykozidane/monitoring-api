@@ -17,10 +17,10 @@ export const getAllDataStation = async (c_project) => {
                     (
                         SELECT DISTINCT ON (
                             m.c_project,
-                            TRIM(m.c_station)
+                            m.c_station
                         )
                             m.c_project,
-                            TRIM(m.c_station) AS c_station,
+                            m.c_station AS c_station,
                             m.n_status,
                             m.d_monitoring
                         FROM opr.t_d_monitoring_device m
@@ -28,13 +28,13 @@ export const getAllDataStation = async (c_project) => {
                         JOIN master.t_m_terminal t
                             ON t.c_terminal_sn = m.c_terminal_sn
                             AND t.c_project = m.c_project
-                            AND TRIM(t.c_station) = TRIM(m.c_station)
+                            AND t.c_station = m.c_station
                             AND t.b_active = true
                             AND t.d_deleted_at IS NULL
 
                         ORDER BY
                             m.c_project,
-                            TRIM(m.c_station),
+                            m.c_station,
                             m.d_monitoring DESC
                     ) x
                 `)
@@ -83,7 +83,7 @@ export const getAllDataStation = async (c_project) => {
                 "st.c_project",
                 "p.n_project_name",
                 "p.n_project_desc",
-                db.raw("TRIM(st.c_station) AS c_station"),
+                db.raw("st.c_station AS c_station"),
                 "st.n_station",
                 "st.n_lat",
                 "st.n_lng",
@@ -108,7 +108,7 @@ export const getAllDataStation = async (c_project) => {
 
             .leftJoin(latestMonitoring, function () {
                 this.on("lm.c_project", "=", "st.c_project")
-                    .andOn(db.raw("lm.c_station"), "=", db.raw("TRIM(st.c_station)"));
+                    .andOn(db.raw("lm.c_station"), "=", db.raw("st.c_station"));
             })
 
             .where("st.b_active", true);
@@ -119,7 +119,7 @@ export const getAllDataStation = async (c_project) => {
 
         query
             .orderBy("st.c_project", "asc")
-            .orderBy(db.raw("TRIM(st.c_station)"), "asc");
+            .orderBy(db.raw("st.c_station"), "asc");
 
         const result = await query;
 
