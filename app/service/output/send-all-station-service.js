@@ -63,6 +63,14 @@ export const getAllDataStation = async (c_project) => {
     )
 
     .where("st.b_active", true);
+    // 🔥 FILTER PROJECT
+        if (c_project) {
+            query.andWhere("st.c_project", c_project);
+        }
+
+        query
+            .orderBy("st.c_project", "asc")
+            .orderBy("st.c_station", "asc");
 
         const result = await query;
 
