@@ -20,6 +20,8 @@ import elasticClient from "./app/config/elasticsearch.js";
 import { startMonitoringServerCron } from "./app/cron/monitoring-server-cron.js";
 // import { runServerMonitoringCron } from "./app/cron/maping-monitoring-server-cron.js";
 import "./app/cron/maping-monitoring-server-cron.js";
+import "./app/cron/gate-transaction-cron.js";
+// import { encrypt } from "./app/utils/crypto.js";
 // import cron from "node-cron";
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
