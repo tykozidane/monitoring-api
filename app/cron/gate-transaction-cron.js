@@ -139,7 +139,9 @@ const processStation = async (
             decrypt(
                 station.e_password_postgresql
             );
-
+            console.log(
+                `🔑 Decrypted password for ${station.c_station}: ${password} and database: ${station.n_database_name} with ip: ${station.ip_address}`
+            );
         dynamicDb =
             createDynamicConnection({
                 host: station.ip_address,
