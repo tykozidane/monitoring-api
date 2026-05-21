@@ -104,7 +104,7 @@ const processStation = async (
     try {
 
         console.log(
-            `🚀 Processing station ${station.c_station}`
+            `🚀 GATE TRANSACTION Processing station ${station.c_station}`
         );
 
         /* =================================================
